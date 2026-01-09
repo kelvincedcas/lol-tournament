@@ -10,8 +10,8 @@ import {
    CONFIG
 ========================= */
 
-const CONCURRENCY_LIMIT = 3; // Ajustable si Riot aprueba producción
-const PLAYER_CACHE_TTL = 1000 * 60 * 20; // 30 min
+const CONCURRENCY_LIMIT = 3;
+const PLAYER_CACHE_TTL = 1000 * 60 * 20; // 20 min
 
 /* =========================
    GLOBAL CACHE
@@ -21,8 +21,8 @@ let CACHE: any = null;
 let LAST_UPDATE = 0;
 let LAST_REFRESH = 0;
 
-const CACHE_TTL = 1000 * 60 * 10; // 15 min
-const REFRESH_COOLDOWN = 1000 * 60 * 10; // 10 min
+const CACHE_TTL = 1000 * 60 * 10; // 10 min
+const REFRESH_COOLDOWN = 1000 * 60 * 10;
 
 /* =========================
    PLAYER CACHE
@@ -31,10 +31,10 @@ const REFRESH_COOLDOWN = 1000 * 60 * 10; // 10 min
 const PLAYER_CACHE = new Map<string, { timestamp: number; data: any }>();
 
 /* =========================
-   HELPERS (RIOT SAFE)
+   RIOT HELPERS
 ========================= */
 
-async function sleep(ms: number) {
+function sleep(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
@@ -138,17 +138,12 @@ async function runWithConcurrency<T>(
 }
 
 /* =========================
-   HANDLER
+   HANDLER (NODE SERVERLESS)
 ========================= */
 
-export default async function handler(request: Request) {
+export default async function handler(request: any, response: any) {
   try {
-    // URL FIX (Vercel)
-    const host = request.headers.get('host') ?? 'localhost';
-    const protocol = host.includes('localhost') ? 'http' : 'https';
-    const url = new URL(request.url, `${protocol}://${host}`);
-
-    const refreshRequested = url.searchParams.get('refresh') === 'true';
+    const refreshRequested = request.query?.refresh === 'true';
     const now = Date.now();
 
     /* =========================
@@ -156,11 +151,11 @@ export default async function handler(request: Request) {
     ========================= */
 
     if (!refreshRequested && CACHE && now - LAST_UPDATE < CACHE_TTL) {
-      return jsonResponse({ ...CACHE, fromCache: true });
+      return response.status(200).json({ ...CACHE, fromCache: true });
     }
 
     if (refreshRequested && CACHE && now - LAST_REFRESH < REFRESH_COOLDOWN) {
-      return jsonResponse({
+      return response.status(200).json({
         ...CACHE,
         fromCache: true,
         message: 'Refresh en cooldown',
@@ -170,7 +165,7 @@ export default async function handler(request: Request) {
     LAST_REFRESH = now;
 
     /* =========================
-       DATA FETCH (SAFE)
+       DATA FETCH
     ========================= */
 
     const players = await runWithConcurrency(
@@ -193,23 +188,11 @@ export default async function handler(request: Request) {
     CACHE = payload;
     LAST_UPDATE = now;
 
-    return jsonResponse(payload);
+    return response.status(200).json(payload);
   } catch (error) {
     console.error('Handler error:', error);
-    return jsonResponse({ error: 'Internal server error' }, { status: 500 });
+    return response.status(500).json({
+      error: 'Internal server error',
+    });
   }
-}
-
-/* =========================
-   RESPONSE
-========================= */
-
-function jsonResponse(data: any, options: { status?: number } = {}) {
-  return new Response(JSON.stringify(data), {
-    status: options.status ?? 200,
-    headers: {
-      'Content-Type': 'application/json',
-      'Cache-Control': 'no-store',
-    },
-  });
 }
