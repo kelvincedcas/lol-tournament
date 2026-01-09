@@ -1,10 +1,10 @@
-import { TOURNAMENT_PLAYERS } from '../lib/players';
-import { getPuuid, getSummonerId, getSoloQ } from '../lib/riot';
+import { TOURNAMENT_PLAYERS } from '../lib/players.js';
+import { getPuuid, getSummonerId, getSoloQ } from '../lib/riot.js';
 import {
   calculateTournamentPoints,
   buildRanking,
   calculateMVP,
-} from '../lib/tournament';
+} from '../lib/tournament.js';
 
 /* =========================
    CACHE
