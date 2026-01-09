@@ -1,38 +1,40 @@
-const RIOT_REGION = 'americas';
-const LOL_REGION = 'la1';
-
-const RIOT_HEADERS = {
-  'X-Riot-Token': process.env.RIOT_API_KEY as string,
-};
+const RIOT_REGION = process.env.RIOT_REGION!;
+const RIOT_PLATFORM = process.env.RIOT_PLATFORM!;
+const API_KEY = process.env.RIOT_API_KEY!;
 
 async function riotFetch(url: string) {
-  const res = await fetch(url, { headers: RIOT_HEADERS });
+  const res = await fetch(url, {
+    headers: {
+      'X-Riot-Token': API_KEY,
+    },
+  });
 
   if (!res.ok) {
-    throw new Error(`Riot API error ${res.status}`);
+    const text = await res.text();
+    throw new Error(`Riot API error ${res.status}: ${text}`);
   }
 
   return res.json();
 }
 
 export async function getPuuid(gameName: string, tag: string) {
-  const data = await riotFetch(
-    `https://${RIOT_REGION}.api.riotgames.com/riot/account/v1/accounts/by-riot-id/${gameName}/${tag}`,
-  );
-  return data.puuid;
+  return riotFetch(
+    `https://${RIOT_REGION}.api.riotgames.com/riot/account/v1/accounts/by-riot-id/${encodeURIComponent(
+      gameName,
+    )}/${tag}`,
+  ).then((d) => d.puuid);
 }
 
 export async function getSummonerId(puuid: string) {
-  const data = await riotFetch(
-    `https://${LOL_REGION}.api.riotgames.com/lol/summoner/v4/summoners/by-puuid/${puuid}`,
-  );
-  return data.id;
+  return riotFetch(
+    `https://${RIOT_PLATFORM}.api.riotgames.com/lol/summoner/v4/summoners/by-puuid/${puuid}`,
+  ).then((d) => d.id);
 }
 
 export async function getSoloQ(summonerId: string) {
-  const entries = await riotFetch(
-    `https://${LOL_REGION}.api.riotgames.com/lol/league/v4/entries/by-summoner/${summonerId}`,
+  const leagues = await riotFetch(
+    `https://${RIOT_PLATFORM}.api.riotgames.com/lol/league/v4/entries/by-summoner/${summonerId}`,
   );
 
-  return entries.find((e: any) => e.queueType === 'RANKED_SOLO_5x5');
+  return leagues.find((l: any) => l.queueType === 'RANKED_SOLO_5x5');
 }
