@@ -17,17 +17,18 @@ let LAST_REFRESH = 0;
 const CACHE_TTL = 1000 * 60 * 15;
 const REFRESH_COOLDOWN = 1000 * 60 * 10;
 
-export default async function handler(req: any, res: any) {
+export default async function handler(request: Request) {
   try {
-    const refreshRequested = req.query.refresh === 'true';
+    const { searchParams } = new URL(request.url);
+    const refreshRequested = searchParams.get('refresh') === 'true';
     const now = Date.now();
 
     if (!refreshRequested && CACHE && now - LAST_UPDATE < CACHE_TTL) {
-      return res.status(200).json({ ...CACHE, fromCache: true });
+      return jsonResponse({ ...CACHE, fromCache: true });
     }
 
     if (refreshRequested && CACHE && now - LAST_REFRESH < REFRESH_COOLDOWN) {
-      return res.status(200).json({
+      return jsonResponse({
         ...CACHE,
         fromCache: true,
         message: 'Refresh en cooldown',
@@ -36,7 +37,7 @@ export default async function handler(req: any, res: any) {
 
     LAST_REFRESH = now;
 
-    const players = [];
+    const players: any[] = [];
 
     for (const p of TOURNAMENT_PLAYERS) {
       try {
@@ -60,6 +61,7 @@ export default async function handler(req: any, res: any) {
 
         players.push({
           nickname: p.nickname,
+          role: p.role,
           tier: ranked.tier,
           rank: ranked.rank,
           lp: ranked.leaguePoints,
@@ -88,9 +90,22 @@ export default async function handler(req: any, res: any) {
     CACHE = payload;
     LAST_UPDATE = now;
 
-    res.status(200).json(payload);
+    return jsonResponse(payload);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Internal server error' });
+    return jsonResponse({ error: 'Internal server error' }, { status: 500 });
   }
+}
+
+/* =========================
+   HELPERS
+========================= */
+
+function jsonResponse(data: any, options: { status?: number } = {}) {
+  return new Response(JSON.stringify(data), {
+    status: options.status ?? 200,
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
 }

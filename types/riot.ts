@@ -6,3 +6,5 @@ export type RankedEntry = {
   wins: number;
   losses: number;
 };
+
+export type Role = 'TOP' | 'JUNGLE' | 'MID' | 'ADC' | 'SUPPORT';
