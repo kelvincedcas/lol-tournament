@@ -1,6 +1,8 @@
-const RIOT_REGION = process.env.RIOT_REGION!;
-const RIOT_PLATFORM = process.env.RIOT_PLATFORM!;
+import { SoloQRanked } from '../types/riot';
+
 const API_KEY = process.env.RIOT_API_KEY!;
+const AMERICAS = 'https://americas.api.riotgames.com';
+const LA1 = 'https://la1.api.riotgames.com';
 
 async function riotFetch(url: string) {
   const res = await fetch(url, {
@@ -17,24 +19,30 @@ async function riotFetch(url: string) {
   return res.json();
 }
 
-export async function getPuuid(gameName: string, tag: string) {
-  return riotFetch(
-    `https://${RIOT_REGION}.api.riotgames.com/riot/account/v1/accounts/by-riot-id/${encodeURIComponent(
+/* =========================
+   ACCOUNT / PUUID
+========================= */
+
+export async function getPuuid(gameName: string, tagLine: string) {
+  const data = await riotFetch(
+    `${AMERICAS}/riot/account/v1/accounts/by-riot-id/${encodeURIComponent(
       gameName,
-    )}/${tag}`,
-  ).then((d) => d.puuid);
-}
-
-export async function getSummonerId(puuid: string) {
-  return riotFetch(
-    `https://${RIOT_PLATFORM}.api.riotgames.com/lol/summoner/v4/summoners/by-puuid/${puuid}`,
-  ).then((d) => d.id);
-}
-
-export async function getSoloQ(summonerId: string) {
-  const leagues = await riotFetch(
-    `https://${RIOT_PLATFORM}.api.riotgames.com/lol/league/v4/entries/by-summoner/${summonerId}`,
+    )}/${encodeURIComponent(tagLine)}`,
   );
 
-  return leagues.find((l: any) => l.queueType === 'RANKED_SOLO_5x5');
+  return data.puuid as string;
+}
+
+/* =========================
+   RANKED BY PUUID (NUEVO)
+========================= */
+
+export async function getSoloQByPuuid(
+  puuid: string,
+): Promise<SoloQRanked | null> {
+  const leagues = await riotFetch(
+    `${LA1}/lol/league/v4/entries/by-puuid/${puuid}`,
+  );
+
+  return leagues.find((l: any) => l.queueType === 'RANKED_SOLO_5x5') || null;
 }

@@ -1,10 +1,11 @@
 import { TOURNAMENT_PLAYERS } from '../lib/players.js';
-import { getPuuid, getSummonerId, getSoloQ } from '../lib/riot.js';
+import { getPuuid, getSoloQByPuuid } from '../lib/riot.js';
 import {
   calculateTournamentPoints,
   buildRanking,
   calculateMVP,
 } from '../lib/tournament.js';
+import { SoloQRanked } from '../types/riot.js';
 
 /* =========================
    CONFIG
@@ -68,9 +69,7 @@ async function fetchPlayerData(p: any) {
 
   const puuid = await withRetry(() => getPuuid(p.nickname, p.tag));
 
-  const summonerId = await withRetry(() => getSummonerId(puuid));
-
-  const ranked = await withRetry(() => getSoloQ(summonerId));
+  const ranked = await withRetry(() => getSoloQByPuuid(puuid));
 
   if (!ranked) return null;
 
