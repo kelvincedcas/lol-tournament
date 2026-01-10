@@ -13,6 +13,7 @@ const TopPlayersSection = () => {
     .slice(0, 6);
 
   const { data } = useSoloQ();
+  console.log({ data });
 
   return (
     <section className="py-16 px-4 bg-linear-to-b from-background to-card/30">
