@@ -32,6 +32,19 @@ const REFRESH_COOLDOWN = 1000 * 60 * 10;
 const PLAYER_CACHE = new Map<string, { timestamp: number; data: any }>();
 
 /* =========================
+   CORS
+========================= */
+
+function setCors(response: any) {
+  response.setHeader('Access-Control-Allow-Origin', '*');
+  response.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS');
+  response.setHeader(
+    'Access-Control-Allow-Headers',
+    'Content-Type, Authorization',
+  );
+}
+
+/* =========================
    RIOT HELPERS
 ========================= */
 
@@ -68,7 +81,6 @@ async function fetchPlayerData(p: any) {
   }
 
   const puuid = await withRetry(() => getPuuid(p.nickname, p.tag));
-
   const ranked = await withRetry(() => getSoloQByPuuid(puuid));
 
   if (!ranked) return null;
@@ -141,13 +153,17 @@ async function runWithConcurrency<T>(
 ========================= */
 
 export default async function handler(request: any, response: any) {
+  // CORS
+  setCors(response);
+
+  // Preflight
+  if (request.method === 'OPTIONS') {
+    return response.status(200).end();
+  }
+
   try {
     const refreshRequested = request.query?.refresh === 'true';
     const now = Date.now();
-
-    /* =========================
-       GLOBAL CACHE
-    ========================= */
 
     if (!refreshRequested && CACHE && now - LAST_UPDATE < CACHE_TTL) {
       return response.status(200).json({ ...CACHE, fromCache: true });
@@ -162,10 +178,6 @@ export default async function handler(request: any, response: any) {
     }
 
     LAST_REFRESH = now;
-
-    /* =========================
-       DATA FETCH
-    ========================= */
 
     const players = await runWithConcurrency(
       TOURNAMENT_PLAYERS,

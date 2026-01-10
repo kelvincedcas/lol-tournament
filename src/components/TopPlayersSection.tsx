@@ -4,12 +4,15 @@ import {
   getRoleIcon,
   type Participant,
 } from '@/data/participants.data';
+import { useSoloQ } from '@/hooks/useSoloQ';
 import { Trophy, Flame, Sword } from 'lucide-react';
 
 const TopPlayersSection = () => {
   const topPlayers = [...participants]
     .sort((a, b) => b.tournamentPoints - a.tournamentPoints)
     .slice(0, 6);
+
+  const { data } = useSoloQ();
 
   return (
     <section className="py-16 px-4 bg-linear-to-b from-background to-card/30">
