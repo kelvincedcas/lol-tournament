@@ -1,17 +1,16 @@
-import {
-  participants,
-  getRankColor,
-  getRoleIcon,
-  type Participant,
-} from '@/data/participants.data';
+import { getRankColor, getRoleIcon, type Rank } from '@/data/participants.data';
+import { useSoloQ } from '@/hooks/useSoloQ';
+import type { Player } from '@/interfaces/tournament-stats.response';
 import { Crown, Medal, Award } from 'lucide-react';
 import type { JSX } from 'react';
 
 const LeaderboardTable = () => {
   // Sort by tournament points descending
-  const sortedParticipants = [...participants].sort(
-    (a, b) => b.tournamentPoints - a.tournamentPoints,
-  );
+  const { data } = useSoloQ();
+
+  if (!data) return;
+
+  const sortedParticipants = data?.ranking;
 
   const getRankBadge = (position: number) => {
     if (position === 1) {
@@ -42,12 +41,6 @@ const LeaderboardTable = () => {
         </span>
       </div>
     );
-  };
-
-  const getWinRate = (wins: number, losses: number): string => {
-    const total = wins + losses;
-    if (total === 0) return '0%';
-    return `${Math.round((wins / total) * 100)}%`;
   };
 
   const getWinRateColor = (wins: number, losses: number): string => {
@@ -103,14 +96,14 @@ const LeaderboardTable = () => {
             <tbody>
               {sortedParticipants.map((participant, index) => (
                 <tr
-                  key={participant.id}
+                  key={participant.nickname}
                   className="border-b border-border/50 last:border-0 hover:bg-muted/20 transition-colors animate-slide-up"
                   style={{ animationDelay: `${index * 50}ms` }}
                 >
                   <td className="px-6 py-4">{getRankBadge(index + 1)}</td>
                   <td className="px-6 py-4">
                     <span className="font-semibold text-foreground">
-                      {participant.summonerName}
+                      {participant.nickname}
                     </span>
                   </td>
                   <td className="px-6 py-4">
@@ -124,17 +117,17 @@ const LeaderboardTable = () => {
                   <td className="px-6 py-4">
                     <span
                       className={`font-semibold ${getRankColor(
-                        participant.rank,
+                        participant.tier as Rank,
                       )}`}
                     >
-                      {participant.rank} {participant.division || ''}
+                      {participant.tier} {participant.rank || ''}
                     </span>
                     <span className="text-muted-foreground ml-2 text-sm">
                       {participant.lp} LP
                     </span>
                   </td>
                   <td className="px-6 py-4 text-center text-muted-foreground">
-                    {participant.gamesPlayed}
+                    {participant.totalGames}
                   </td>
                   <td className="px-6 py-4 text-center">
                     <span className="text-rank-emerald">
@@ -152,7 +145,7 @@ const LeaderboardTable = () => {
                         participant.losses,
                       )}`}
                     >
-                      {getWinRate(participant.wins, participant.losses)}
+                      {participant.winrate} %
                     </span>
                   </td>
                   <td className="px-6 py-4 text-right">
@@ -170,11 +163,10 @@ const LeaderboardTable = () => {
         <div className="md:hidden space-y-4">
           {sortedParticipants.map((participant, index) => (
             <MobilePlayerCard
-              key={participant.id}
+              key={participant.nickname}
               participant={participant}
               position={index + 1}
               getRankBadge={getRankBadge}
-              getWinRate={getWinRate}
               getWinRateColor={getWinRateColor}
             />
           ))}
@@ -185,10 +177,9 @@ const LeaderboardTable = () => {
 };
 
 interface MobilePlayerCardProps {
-  participant: Participant;
+  participant: Player;
   position: number;
   getRankBadge: (position: number) => JSX.Element;
-  getWinRate: (wins: number, losses: number) => string;
   getWinRateColor: (wins: number, losses: number) => string;
 }
 
@@ -196,7 +187,6 @@ const MobilePlayerCard = ({
   participant,
   position,
   getRankBadge,
-  getWinRate,
   getWinRateColor,
 }: MobilePlayerCardProps) => {
   return (
@@ -206,7 +196,7 @@ const MobilePlayerCard = ({
           {getRankBadge(position)}
           <div>
             <p className="font-semibold text-foreground">
-              {participant.summonerName}
+              {participant.nickname}
             </p>
             <p className="text-sm text-muted-foreground flex items-center gap-1">
               {getRoleIcon(participant.role)} {participant.role}
@@ -223,14 +213,18 @@ const MobilePlayerCard = ({
 
       <div className="grid grid-cols-3 gap-4 text-center">
         <div className="p-2 rounded-lg bg-muted/30">
-          <p className={`font-semibold ${getRankColor(participant.rank)}`}>
-            {participant.rank} {participant.division || ''}
+          <p
+            className={`font-semibold ${getRankColor(
+              participant.tier as Rank,
+            )}`}
+          >
+            {participant.tier} {participant.rank || ''}
           </p>
           <p className="text-xs text-muted-foreground">{participant.lp} LP</p>
         </div>
         <div className="p-2 rounded-lg bg-muted/30">
           <p className="font-semibold text-foreground">
-            {participant.gamesPlayed}
+            {participant.totalGames}
           </p>
           <p className="text-xs text-muted-foreground">Juegos</p>
         </div>
@@ -241,7 +235,7 @@ const MobilePlayerCard = ({
               participant.losses,
             )}`}
           >
-            {getWinRate(participant.wins, participant.losses)}
+            {participant.winrate} %
           </p>
           <p className="text-xs text-muted-foreground">
             {participant.wins}W / {participant.losses}L

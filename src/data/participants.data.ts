@@ -1,16 +1,16 @@
-export type Role = 'Top' | 'Jungle' | 'Mid' | 'ADC' | 'Support';
+export type Role = 'TOP' | 'JUNGLE' | 'MID' | 'ADC' | 'SUPPORT';
 
 export type Rank =
-  | 'Iron'
-  | 'Bronze'
-  | 'Silver'
-  | 'Gold'
-  | 'Platinum'
-  | 'Emerald'
-  | 'Diamond'
-  | 'Master'
-  | 'Grandmaster'
-  | 'Challenger';
+  | 'IRON'
+  | 'BRONZE'
+  | 'SILVER'
+  | 'GOLD'
+  | 'PLATINUM'
+  | 'EMERALD'
+  | 'DIAMOND'
+  | 'MASTER'
+  | 'GRANDMASTER'
+  | 'CHALLENGER';
 
 export type Division = 'IV' | 'III' | 'II' | 'I';
 
@@ -31,16 +31,16 @@ export interface Participant {
 // Iron 4 = 0, Iron 3 = 100, Iron 2 = 200, Iron 1 = 300
 // Bronze 4 = 400, etc.
 const rankOrder: Rank[] = [
-  'Iron',
-  'Bronze',
-  'Silver',
-  'Gold',
-  'Platinum',
-  'Emerald',
-  'Diamond',
-  'Master',
-  'Grandmaster',
-  'Challenger',
+  'IRON',
+  'BRONZE',
+  'SILVER',
+  'GOLD',
+  'PLATINUM',
+  'EMERALD',
+  'DIAMOND',
+  'MASTER',
+  'GRANDMASTER',
+  'CHALLENGER',
 ];
 
 const divisionOrder: (Division | null)[] = ['IV', 'III', 'II', 'I'];
@@ -63,9 +63,9 @@ export const calculateTournamentPoints = (
   } else {
     // Master, Grandmaster, Challenger
     points = 7 * 400; // Diamond 1 = 2800
-    if (rank === 'Master') points += 100;
-    else if (rank === 'Grandmaster') points += 200;
-    else if (rank === 'Challenger') points += 300;
+    if (rank === 'MASTER') points += 100;
+    else if (rank === 'GRANDMASTER') points += 200;
+    else if (rank === 'CHALLENGER') points += 300;
   }
 
   // Add LP (scaled down for display)
@@ -78,10 +78,10 @@ export const participants: Participant[] = [
   {
     id: '1',
     summonerName: 'ShadowSlayer',
-    rank: 'Diamond',
+    rank: 'DIAMOND',
     division: 'II',
     lp: 67,
-    role: 'Mid',
+    role: 'MID',
     gamesPlayed: 342,
     wins: 189,
     losses: 153,
@@ -175,27 +175,27 @@ export const participants: Participant[] = [
 
 export const getRankColor = (rank: Rank): string => {
   const colors: Record<Rank, string> = {
-    Iron: 'text-rank-iron',
-    Bronze: 'text-rank-bronze',
-    Silver: 'text-rank-silver',
-    Gold: 'text-rank-gold',
-    Platinum: 'text-rank-platinum',
-    Emerald: 'text-rank-emerald',
-    Diamond: 'text-rank-diamond',
-    Master: 'text-rank-master',
-    Grandmaster: 'text-rank-grandmaster',
-    Challenger: 'text-rank-challenger',
+    IRON: 'text-rank-iron',
+    BRONZE: 'text-rank-bronze',
+    SILVER: 'text-rank-silver',
+    GOLD: 'text-rank-gold',
+    PLATINUM: 'text-rank-platinum',
+    EMERALD: 'text-rank-emerald',
+    DIAMOND: 'text-rank-diamond',
+    MASTER: 'text-rank-master',
+    GRANDMASTER: 'text-rank-grandmaster',
+    CHALLENGER: 'text-rank-challenger',
   };
   return colors[rank];
 };
 
-export const getRoleIcon = (role: Role): string => {
+export const getRoleIcon = (role: string): string => {
   const icons: Record<Role, string> = {
-    Top: '⚔️',
-    Jungle: '🌲',
-    Mid: '🎯',
+    TOP: '⚔️',
+    JUNGLE: '🌲',
+    MID: '🎯',
     ADC: '🏹',
-    Support: '🛡️',
+    SUPPORT: '🛡️',
   };
   return icons[role];
 };

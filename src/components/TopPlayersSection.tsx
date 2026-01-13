@@ -1,19 +1,14 @@
-import {
-  participants,
-  getRankColor,
-  getRoleIcon,
-  type Participant,
-} from '@/data/participants.data';
+import { getRankColor, getRoleIcon, type Rank } from '@/data/participants.data';
 import { useSoloQ } from '@/hooks/useSoloQ';
+import type { Player } from '@/interfaces/tournament-stats.response';
 import { Trophy, Flame, Sword } from 'lucide-react';
 
 const TopPlayersSection = () => {
-  const topPlayers = [...participants]
-    .sort((a, b) => b.tournamentPoints - a.tournamentPoints)
-    .slice(0, 6);
-
   const { data } = useSoloQ();
-  console.log({ data });
+
+  if (!data) return;
+
+  const topPlayers = data?.ranking.slice(0, 6);
 
   return (
     <section className="py-16 px-4 bg-linear-to-b from-background to-card/30">
@@ -30,13 +25,17 @@ const TopPlayersSection = () => {
             Top 6 jugadores
           </h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">
-            Los jugadores con más elo que compliten por alcanzar la cima.
+            Los jugadores con más elo que compliten por alcanzar la cima
           </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {topPlayers.map((player, index) => (
-            <PlayerCard key={player.id} player={player} position={index + 1} />
+            <PlayerCard
+              key={player.nickname}
+              player={player}
+              position={index + 1}
+            />
           ))}
         </div>
       </div>
@@ -45,13 +44,13 @@ const TopPlayersSection = () => {
 };
 
 interface PlayerCardProps {
-  player: Participant;
+  player: Player;
   position: number;
 }
 
 const PlayerCard = ({ player, position }: PlayerCardProps) => {
-  const winRate = ((player.wins / player.gamesPlayed) * 100).toFixed(1);
-  const rankColor = getRankColor(player.rank);
+  const winRate = player.winrate;
+  const rankColor = getRankColor(player.tier as Rank);
   const roleIcon = getRoleIcon(player.role);
 
   const getPositionStyle = (pos: number) => {
@@ -65,6 +64,15 @@ const PlayerCard = ({ player, position }: PlayerCardProps) => {
       default:
         return 'from-card to-card/80 border-border';
     }
+  };
+
+  const getWinRateColor = (wins: number, losses: number): string => {
+    const total = wins + losses;
+    if (total === 0) return 'text-muted-foreground';
+    const rate = (wins / total) * 100;
+    if (rate >= 55) return 'text-rank-emerald';
+    if (rate >= 50) return 'text-foreground';
+    return 'text-destructive';
   };
 
   const getPositionBadge = (pos: number) => {
@@ -113,10 +121,10 @@ const PlayerCard = ({ player, position }: PlayerCardProps) => {
 
         <div className="flex-1">
           <h3 className="text-lg font-bold text-foreground mb-1">
-            {player.summonerName}
+            {player.nickname}
           </h3>
           <div className={`text-sm font-semibold ${rankColor}`}>
-            {player.rank} {player.division && player.division} • {player.lp} LP
+            {player.tier} {player.rank} • {player.lp} LP
           </div>
           <div className="text-xs text-muted-foreground mt-1">
             {player.role}
@@ -128,12 +136,19 @@ const PlayerCard = ({ player, position }: PlayerCardProps) => {
         <div className="grid grid-cols-3 gap-3 text-center">
           <div>
             <div className="text-lg font-bold text-foreground">
-              {player.gamesPlayed}
+              {player.totalGames}
             </div>
             <div className="text-xs text-muted-foreground">Juegos</div>
           </div>
           <div>
-            <div className="text-lg font-bold text-green-400">{winRate}%</div>
+            <div
+              className={`text-lg font-bold ${getWinRateColor(
+                player.wins,
+                player.losses,
+              )}`}
+            >
+              {winRate}%
+            </div>
             <div className="text-xs text-muted-foreground">Win Rate</div>
           </div>
           <div>
