@@ -4,6 +4,7 @@ import HeroSection from './components/HeroSection';
 import LeaderboardTable from './components/LeaderBoardTable';
 import PointsExplainer from './components/PointsExplainer';
 import RulesSection from './components/RulesSection';
+import HeroSectionSkeleton from './components/skeletons/HeroSectionSkeleton';
 import LeaderboardSkeleton from './components/skeletons/LeaderboardSkeleton';
 import TopPlayersSkeleton from './components/skeletons/TopPlayersSkeleton';
 import TopPlayersSection from './components/TopPlayersSection';
@@ -13,9 +14,8 @@ export const LolTournament = () => {
   const { isLoading } = useSoloQ();
   return (
     <div className="min-h-screen bg-background">
-      <HeroSection />
+      {isLoading ? <HeroSectionSkeleton /> : <HeroSection />}
       {isLoading ? <TopPlayersSkeleton /> : <TopPlayersSection />}
-
       {isLoading ? <LeaderboardSkeleton /> : <LeaderboardTable />}
       <AwardsSection />
       <RulesSection />

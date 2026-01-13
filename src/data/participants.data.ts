@@ -15,7 +15,6 @@ export type Rank =
 export type Division = 'IV' | 'III' | 'II' | 'I';
 
 export interface Participant {
-  id: string;
   summonerName: string;
   rank: Rank;
   division: Division | null; // Master+ has no division

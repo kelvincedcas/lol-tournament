@@ -1,14 +1,8 @@
 import { Trophy, Users, Target, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useSoloQ } from '@/hooks/useSoloQ';
+import { Skeleton } from '../ui/skeleton';
 
-const HeroSection = () => {
-  const { data } = useSoloQ();
-
-  if (!data) return;
-
-  const ranking = data?.ranking;
-
+const HeroSectionSkeleton = () => {
   return (
     <section className="relative overflow-hidden py-16 md:py-24">
       {/* Background effects */}
@@ -42,9 +36,7 @@ const HeroSection = () => {
                 <Users className="w-5 h-5 text-secondary" />
               </div>
               <div className="text-left">
-                <p className="text-2xl font-bold text-foreground">
-                  {ranking.length}
-                </p>
+                <Skeleton className="h-6 w-8 rounded-md" />
                 <p className="text-sm text-muted-foreground">Participantes</p>
               </div>
             </div>
@@ -54,7 +46,7 @@ const HeroSection = () => {
                 <Target className="w-5 h-5 text-primary" />
               </div>
               <div className="text-left">
-                <p className="text-2xl font-bold text-foreground">100</p>
+                <Skeleton className="h-6 w-12 rounded-md" />
                 <p className="text-sm text-muted-foreground">Puntos/División</p>
               </div>
             </div>
@@ -64,10 +56,7 @@ const HeroSection = () => {
                 <Trophy className="w-5 h-5 text-rank-master" />
               </div>
               <div className="text-left">
-                <p className="text-2xl font-bold text-foreground">
-                  {ranking[0].tier.slice(0, 1)}
-                  {ranking[0].tier.toLocaleLowerCase().slice(1)}
-                </p>
+                <Skeleton className="h-6 w-22 rounded-md" />
                 <p className="text-sm text-muted-foreground">Elo más alto</p>
               </div>
             </div>
@@ -76,7 +65,7 @@ const HeroSection = () => {
           {/* Refresh Button */}
           <div className="mt-8">
             <Button
-              onClick={() => window.location.reload()}
+              disabled
               variant="outline"
               className="gap-2 border-primary/30 hover:border-primary/60 hover:bg-primary/10"
             >
@@ -90,4 +79,4 @@ const HeroSection = () => {
   );
 };
 
-export default HeroSection;
+export default HeroSectionSkeleton;
