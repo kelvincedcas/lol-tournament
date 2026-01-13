@@ -1,4 +1,9 @@
-import { getRankColor, getRoleIcon, type Rank } from '@/data/participants.data';
+import {
+  getRankColor,
+  getRoleIcon,
+  type Rank,
+  type Role,
+} from '@/data/participants.data';
 import { useSoloQ } from '@/hooks/useSoloQ';
 import type { Player } from '@/interfaces/tournament-stats.response';
 import { Crown, Medal, Award } from 'lucide-react';
@@ -108,7 +113,7 @@ const LeaderboardTable = () => {
                   </td>
                   <td className="px-6 py-4">
                     <span className="flex items-center gap-2">
-                      <span>{getRoleIcon(participant.role)}</span>
+                      <span>{getRoleIcon(participant.role as Role)}</span>
                       <span className="text-muted-foreground">
                         {participant.role}
                       </span>
@@ -199,7 +204,7 @@ const MobilePlayerCard = ({
               {participant.nickname}
             </p>
             <p className="text-sm text-muted-foreground flex items-center gap-1">
-              {getRoleIcon(participant.role)} {participant.role}
+              {getRoleIcon(participant.role as Role)} {participant.role}
             </p>
           </div>
         </div>

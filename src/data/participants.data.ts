@@ -73,105 +73,6 @@ export const calculateTournamentPoints = (
   return points;
 };
 
-export const participants: Participant[] = [
-  {
-    id: '1',
-    summonerName: 'ShadowSlayer',
-    rank: 'DIAMOND',
-    division: 'II',
-    lp: 67,
-    role: 'MID',
-    gamesPlayed: 342,
-    wins: 189,
-    losses: 153,
-    tournamentPoints: calculateTournamentPoints('Diamond', 'II', 67),
-  },
-  {
-    id: '2',
-    summonerName: 'IronWill',
-    rank: 'Emerald',
-    division: 'I',
-    lp: 45,
-    role: 'Top',
-    gamesPlayed: 256,
-    wins: 138,
-    losses: 118,
-    tournamentPoints: calculateTournamentPoints('Emerald', 'I', 45),
-  },
-  {
-    id: '3',
-    summonerName: 'JungleKing',
-    rank: 'Platinum',
-    division: 'III',
-    lp: 89,
-    role: 'Jungle',
-    gamesPlayed: 198,
-    wins: 108,
-    losses: 90,
-    tournamentPoints: calculateTournamentPoints('Platinum', 'III', 89),
-  },
-  {
-    id: '4',
-    summonerName: 'ADCarryMe',
-    rank: 'Gold',
-    division: 'I',
-    lp: 12,
-    role: 'ADC',
-    gamesPlayed: 412,
-    wins: 215,
-    losses: 197,
-    tournamentPoints: calculateTournamentPoints('Gold', 'I', 12),
-  },
-  {
-    id: '5',
-    summonerName: 'HealBot3000',
-    rank: 'Emerald',
-    division: 'IV',
-    lp: 34,
-    role: 'Support',
-    gamesPlayed: 289,
-    wins: 152,
-    losses: 137,
-    tournamentPoints: calculateTournamentPoints('Emerald', 'IV', 34),
-  },
-  {
-    id: '6',
-    summonerName: 'TopDiff',
-    rank: 'Silver',
-    division: 'II',
-    lp: 78,
-    role: 'Top',
-    gamesPlayed: 156,
-    wins: 82,
-    losses: 74,
-    tournamentPoints: calculateTournamentPoints('Silver', 'II', 78),
-  },
-  {
-    id: '7',
-    summonerName: 'MidGap',
-    rank: 'Master',
-    division: null,
-    lp: 156,
-    role: 'Mid',
-    gamesPlayed: 523,
-    wins: 298,
-    losses: 225,
-    tournamentPoints: calculateTournamentPoints('Master', null, 156),
-  },
-  {
-    id: '8',
-    summonerName: 'BronzeWarrior',
-    rank: 'Bronze',
-    division: 'I',
-    lp: 99,
-    role: 'Jungle',
-    gamesPlayed: 87,
-    wins: 45,
-    losses: 42,
-    tournamentPoints: calculateTournamentPoints('Bronze', 'I', 99),
-  },
-];
-
 export const getRankColor = (rank: Rank): string => {
   const colors: Record<Rank, string> = {
     IRON: 'text-rank-iron',
@@ -188,7 +89,7 @@ export const getRankColor = (rank: Rank): string => {
   return colors[rank];
 };
 
-export const getRoleIcon = (role: string): string => {
+export const getRoleIcon = (role: Role): string => {
   const icons: Record<Role, string> = {
     TOP: '⚔️',
     JUNGLE: '🌲',

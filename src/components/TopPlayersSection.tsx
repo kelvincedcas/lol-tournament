@@ -1,4 +1,9 @@
-import { getRankColor, getRoleIcon, type Rank } from '@/data/participants.data';
+import {
+  getRankColor,
+  getRoleIcon,
+  type Rank,
+  type Role,
+} from '@/data/participants.data';
 import { useSoloQ } from '@/hooks/useSoloQ';
 import type { Player } from '@/interfaces/tournament-stats.response';
 import { Trophy, Flame, Sword } from 'lucide-react';
@@ -51,7 +56,7 @@ interface PlayerCardProps {
 const PlayerCard = ({ player, position }: PlayerCardProps) => {
   const winRate = player.winrate;
   const rankColor = getRankColor(player.tier as Rank);
-  const roleIcon = getRoleIcon(player.role);
+  const roleIcon = getRoleIcon(player.role as Role);
 
   const getPositionStyle = (pos: number) => {
     switch (pos) {
