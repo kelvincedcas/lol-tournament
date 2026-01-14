@@ -19,7 +19,8 @@ export const TOURNAMENT_PLAYERS = [
   { nickname: 'iBuprofeno500mg', tag: 'LAN', role: 'SUPPORT', group: 'B' },
   { nickname: 'Guada', tag: 'LAN', role: 'MID', group: 'A' },
   { nickname: 'No lo zed', tag: 'LAN', role: 'MID', group: 'A' },
-  { nickname: 'NickGL12', tag: '3919', role: 'MID', group: 'A' }, // asumido
+  { nickname: 'NickGL12', tag: '3919', role: 'MID', group: 'A' },
+  { nickname: 'Dragon SKT T1', tag: 'LAN', role: 'TOP', group: 'A' },
   { nickname: 'Ivermectina6m', tag: 'LAN', role: 'SUPPORT', group: 'B' },
   { nickname: 'Rudamohi', tag: 'LAN', role: 'JUNGLE', group: 'A' },
   { nickname: 'Sanji Ec', tag: 'LAN', role: 'JUNGLE', group: 'B' },
