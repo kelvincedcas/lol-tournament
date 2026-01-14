@@ -1,7 +1,7 @@
 import { Skeleton } from '@/components/ui/skeleton';
 import { Flame } from 'lucide-react';
 
-const TopPlayersSkeleton = () => {
+export const TopPlayersSkeletonTierA = () => {
   return (
     <section className="py-16 px-4 bg-linear-to-b from-background to-card/30">
       <div className="container mx-auto max-w-6xl">
@@ -82,5 +82,3 @@ const PlayerCardSkeleton = ({ position }: { position: number }) => {
     </div>
   );
 };
-
-export default TopPlayersSkeleton;

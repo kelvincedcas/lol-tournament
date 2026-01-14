@@ -8,7 +8,7 @@ import { useSoloQ } from '@/hooks/useSoloQ';
 import type { Player } from '@/interfaces/tournament-stats.response';
 import { Trophy, Flame, Sword } from 'lucide-react';
 
-const TopPlayersSection = () => {
+export const TopPlayersSectionTierA = () => {
   const { data } = useSoloQ();
 
   if (!data) return;
@@ -27,7 +27,7 @@ const TopPlayersSection = () => {
             <Flame className="w-5 h-5" />
           </div>
           <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-            Top 6 jugadores
+            Top 6 jugadores <span className="text-gradient-gold">Tier A</span>
           </h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">
             Los jugadores con más elo que compliten por alcanzar la cima
@@ -179,5 +179,3 @@ const PlayerCard = ({ player, position }: PlayerCardProps) => {
     </div>
   );
 };
-
-export default TopPlayersSection;

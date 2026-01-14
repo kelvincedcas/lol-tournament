@@ -12,7 +12,6 @@ import {
 
 const CONCURRENCY_LIMIT = 3;
 const PLAYER_CACHE_TTL = 1000 * 60 * 20; // 20 min
-
 const CACHE_TTL = 1000 * 60 * 10; // 10 min
 const REFRESH_COOLDOWN = 1000 * 60 * 10;
 
@@ -83,10 +82,11 @@ async function fetchPlayerData(p: any) {
   let data;
 
   if (!ranked) {
-    // 🟡 UNRANKED PLAYER
+    // 🟡 UNRANKED
     data = {
       nickname: p.nickname,
       role: p.role,
+      group: p.group, // A | B
       tier: 'UNRANKED',
       rank: null,
       lp: 0,
@@ -112,6 +112,7 @@ async function fetchPlayerData(p: any) {
     data = {
       nickname: p.nickname,
       role: p.role,
+      group: p.group, // A | B
       tier: ranked.tier,
       rank: ranked.rank,
       lp: ranked.leaguePoints,
@@ -158,6 +159,21 @@ async function runWithConcurrency<T>(
 }
 
 /* =========================
+   TIER BUILDER
+========================= */
+
+function buildTierResult(players: any[]) {
+  const ranking = buildRanking(players);
+  const mvp = calculateMVP(ranking);
+
+  return {
+    players,
+    ranking,
+    mvp,
+  };
+}
+
+/* =========================
    HANDLER
 ========================= */
 
@@ -189,26 +205,25 @@ export default async function handler(req: any, res: any) {
 
     LAST_REFRESH = now;
 
-    const players = await runWithConcurrency(
+    const allPlayers = await runWithConcurrency(
       TOURNAMENT_PLAYERS,
       CONCURRENCY_LIMIT,
       fetchPlayerData,
     );
 
-    if (players.length !== TOURNAMENT_PLAYERS.length) {
+    if (allPlayers.length !== TOURNAMENT_PLAYERS.length) {
       throw new Error(
-        `Incomplete data: ${players.length}/${TOURNAMENT_PLAYERS.length}`,
+        `Incomplete data: ${allPlayers.length}/${TOURNAMENT_PLAYERS.length}`,
       );
     }
 
-    const ranking = buildRanking(players);
-    const mvp = calculateMVP(ranking);
+    const tierAPlayers = allPlayers.filter((p) => p.group === 'A');
+    const tierBPlayers = allPlayers.filter((p) => p.group === 'B');
 
     const payload = {
       updatedAt: new Date().toISOString(),
-      players,
-      ranking,
-      mvp,
+      tierA: buildTierResult(tierAPlayers),
+      tierB: buildTierResult(tierBPlayers),
       fromCache: false,
     };
 

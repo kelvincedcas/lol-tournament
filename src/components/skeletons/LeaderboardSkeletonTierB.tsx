@@ -1,6 +1,6 @@
 import { Skeleton } from '@/components/ui/skeleton';
 
-const LeaderboardSkeleton = () => {
+export const LeaderboardSkeletonTierB = () => {
   return (
     <section className="py-12 md:py-16">
       <div className="container m-auto p-6">
@@ -126,5 +126,3 @@ const MobilePlayerCardSkeleton = () => {
     </div>
   );
 };
-
-export default LeaderboardSkeleton;

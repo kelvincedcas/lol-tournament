@@ -9,7 +9,7 @@ import type { Player } from '@/interfaces/tournament-stats.response';
 import { Crown, Medal, Award } from 'lucide-react';
 import type { JSX } from 'react';
 
-const LeaderboardTable = () => {
+export const LeaderboardTableTierB = () => {
   // Sort by tournament points descending
   const { data } = useSoloQ();
 
@@ -62,7 +62,8 @@ const LeaderboardTable = () => {
       <div className="container m-auto p-6">
         <div className="flex items-center gap-3 mb-8">
           <h2 className="text-2xl md:text-3xl font-bold text-foreground">
-            Tabla de clasificación
+            Tabla de clasificación{' '}
+            <span className="text-gradient-gold">Tier B</span>
           </h2>
           <div className="h-px flex-1 bg-linear-to-r from-border to-transparent" />
         </div>
@@ -250,5 +251,3 @@ const MobilePlayerCard = ({
     </div>
   );
 };
-
-export default LeaderboardTable;
