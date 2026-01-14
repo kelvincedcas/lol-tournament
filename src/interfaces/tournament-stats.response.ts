@@ -1,8 +1,7 @@
 export interface TournamentStatsResponse {
   updatedAt: Date;
-  players: Player[];
-  ranking: Player[];
-  mvp: Player;
+  tierA: Tier;
+  tierB: Tier;
   fromCache: boolean;
 }
 
@@ -19,3 +18,23 @@ export interface Player {
   winrate: number;
   tournamentPoints: number;
 }
+
+export interface Tier {
+  players: Player[];
+  ranking: Player[];
+  mvp: Player;
+}
+
+export type Group = 'A' | 'B';
+
+export type Rank = 'I' | 'II' | 'III' | 'IV';
+
+export type Role = 'ADC' | 'JUNGLE' | 'MID' | 'ADC' | 'SUPPORT';
+
+export type TierEnum =
+  | 'BRONZE'
+  | 'EMERALD'
+  | 'GOLD'
+  | 'PLATINUM'
+  | 'SILVER'
+  | 'UNRANKED';

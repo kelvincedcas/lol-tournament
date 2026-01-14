@@ -13,7 +13,7 @@ export const TopPlayersSectionTierB = () => {
 
   if (!data) return;
 
-  const topPlayers = data?.ranking.slice(0, 6);
+  const topPlayers = data?.tierB.ranking.slice(0, 6);
 
   return (
     <section className="py-16 px-4 bg-linear-to-b from-background to-card/30">

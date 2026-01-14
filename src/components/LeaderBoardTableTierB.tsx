@@ -15,7 +15,7 @@ export const LeaderboardTableTierB = () => {
 
   if (!data) return;
 
-  const sortedParticipants = data?.ranking;
+  const sortedParticipants = data?.tierB.ranking;
 
   const getRankBadge = (position: number) => {
     if (position === 1) {

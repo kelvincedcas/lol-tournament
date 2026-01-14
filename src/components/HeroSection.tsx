@@ -7,7 +7,7 @@ const HeroSection = () => {
 
   if (!data) return;
 
-  const ranking = data?.ranking;
+  const ranking = [...data.tierA.ranking, ...data.tierB.ranking];
 
   return (
     <section className="relative overflow-hidden py-16 md:py-24">
