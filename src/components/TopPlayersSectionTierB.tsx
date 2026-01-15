@@ -6,8 +6,14 @@ import {
 } from '@/data/participants.data';
 import { useSoloQ } from '@/hooks/useSoloQ';
 import type { Player } from '@/interfaces/tournament-stats.response';
-import { Trophy, Flame, Sword } from 'lucide-react';
+import { Trophy, Flame, Sword, ChartBar } from 'lucide-react';
 import { Button } from './ui/button';
+
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 
 export const TopPlayersSectionTierB = () => {
   const { data } = useSoloQ();
@@ -131,19 +137,25 @@ const PlayerCard = ({ player, position }: PlayerCardProps) => {
               {player.nickname}
             </h3>
             <div>
-              <a
-                target="_blank"
-                rel="noopener noreferrer"
-                href={`https://op.gg/lol/summoners/lan/${player.nickname}-${player.tag}`}
-              >
-                <Button
-                  size={'sm'}
-                  variant="outline"
-                  className="gap-2 border-primary/30 hover:border-primary/60 hover:bg-primary/10"
-                >
-                  Ver estadísticas
-                </Button>
-              </a>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <a
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    href={player.stream}
+                    className="ml-2"
+                  >
+                    <Button
+                      size={'sm'}
+                      variant="outline"
+                      className="gap-2 border-primary/30 hover:border-primary/60 hover:bg-primary/10"
+                    >
+                      <ChartBar />
+                    </Button>
+                  </a>
+                </TooltipTrigger>
+                <TooltipContent>Ver estadísticas</TooltipContent>
+              </Tooltip>
               {player.stream && (
                 <a
                   target="_blank"

@@ -6,7 +6,13 @@ import {
 } from '@/data/participants.data';
 import { useSoloQ } from '@/hooks/useSoloQ';
 import type { Player } from '@/interfaces/tournament-stats.response';
-import { Trophy, Flame, Sword } from 'lucide-react';
+import { Trophy, Flame, Sword, ChartBar } from 'lucide-react';
+
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 import { Button } from './ui/button';
 
 export const TopPlayersSectionTierA = () => {
@@ -126,39 +132,50 @@ const PlayerCard = ({ player, position }: PlayerCardProps) => {
         </div>
 
         <div className="flex-1">
-          <div className="flex items-center gap-2 justify-between">
+          <div className="flex items-center gap-2 justify-between mb-1">
             <h3 className="text-lg font-bold text-foreground mb-1">
               {player.nickname}
             </h3>
-            <div>
-              <a
-                target="_blank"
-                rel="noopener noreferrer"
-                href={`https://op.gg/lol/summoners/lan/${player.nickname}-${player.tag}`}
-              >
-                <Button
-                  size={'sm'}
-                  variant="outline"
-                  className="gap-2 border-primary/30 hover:border-primary/60 hover:bg-primary/10"
-                >
-                  Ver estadísticas
-                </Button>
-              </a>
-              {player.stream && (
-                <a
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  href={player.stream}
-                  className="ml-2"
-                >
-                  <Button
-                    size={'sm'}
-                    variant="outline"
-                    className="border-green-500/50 hover:border-green-500/60 hover:bg-green-500/10"
+            <div className="flex">
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <a
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    href={player.stream}
+                    className="ml-2"
                   >
-                    Ver stream
-                  </Button>
-                </a>
+                    <Button
+                      size={'sm'}
+                      variant="outline"
+                      className="gap-2 border-primary/30 hover:border-primary/60 hover:bg-primary/10"
+                    >
+                      <ChartBar />
+                    </Button>
+                  </a>
+                </TooltipTrigger>
+                <TooltipContent>Ver estadísticas</TooltipContent>
+              </Tooltip>
+              {player.stream && (
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <a
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      href={player.stream}
+                      className="ml-2"
+                    >
+                      <Button
+                        size={'sm'}
+                        variant="outline"
+                        className="border-green-500/50 hover:border-green-500/60 hover:bg-green-500/10"
+                      >
+                        Stream
+                      </Button>
+                    </a>
+                  </TooltipTrigger>
+                  <TooltipContent>Kick</TooltipContent>
+                </Tooltip>
               )}
             </div>
           </div>
