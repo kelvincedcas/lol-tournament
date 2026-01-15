@@ -21,6 +21,10 @@ async function riotFetch(url: string) {
   return res.json();
 }
 
+/* =========================
+   ACCOUNT / PUUID
+========================= */
+
 export async function getPuuid(gameName: string, tagLine: string) {
   const data = await riotFetch(
     `${AMERICAS}/riot/account/v1/accounts/by-riot-id/${encodeURIComponent(
@@ -30,6 +34,10 @@ export async function getPuuid(gameName: string, tagLine: string) {
 
   return data.puuid as string;
 }
+
+/* =========================
+   RANKED BY PUUID
+========================= */
 
 export async function getSoloQByPuuid(
   puuid: string,
@@ -41,6 +49,10 @@ export async function getSoloQByPuuid(
   return leagues.find((l: any) => l.queueType === 'RANKED_SOLO_5x5') || null;
 }
 
+/* =========================
+   SPECTATOR (IN GAME)
+========================= */
+
 export async function isPlayerInGame(puuid: string): Promise<boolean> {
   try {
     await riotFetch(
@@ -48,15 +60,10 @@ export async function isPlayerInGame(puuid: string): Promise<boolean> {
     );
     return true;
   } catch (err: any) {
-    if (err?.status === 404) {
-      return false; // no está en partida
-    }
+    // 404 = no está en partida → válido
+    if (err?.status === 404) return false;
 
-    if (err?.status === 403) {
-      console.warn('Spectator forbidden for puuid:', puuid);
-      return false;
-    }
-
+    // 403 / 429 → no rompemos el backend
     throw err;
   }
 }
