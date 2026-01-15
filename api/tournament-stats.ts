@@ -88,6 +88,7 @@ async function fetchPlayerData(p: any) {
       tag: p.tag,
       role: p.role,
       group: p.group, // A | B
+      ...(p.stream && { stream: p.stream }),
       tier: 'UNRANKED',
       rank: null,
       lp: 0,
@@ -115,6 +116,7 @@ async function fetchPlayerData(p: any) {
       tag: p.tag,
       role: p.role,
       group: p.group, // A | B
+      ...(p.stream && { stream: p.stream }),
       tier: ranked.tier,
       rank: ranked.rank,
       lp: ranked.leaguePoints,

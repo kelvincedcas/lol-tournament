@@ -6,9 +6,15 @@ import {
 } from '@/data/participants.data';
 import { useSoloQ } from '@/hooks/useSoloQ';
 import type { Player } from '@/interfaces/tournament-stats.response';
-import { Crown, Medal, Award, TwitchIcon } from 'lucide-react';
+import { Crown, Medal, Award, ChartBar } from 'lucide-react';
 import type { JSX } from 'react';
-import { Link } from 'react-router-dom';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
+import { Button } from './ui/button';
+import { Kick } from './icons/Kick';
 
 export const LeaderboardTableTierA = () => {
   // Sort by tournament points descending
@@ -94,9 +100,9 @@ export const LeaderboardTableTierA = () => {
                 </th>
                 <th className="px-6 py-4 text-right text-sm font-semibold text-muted-foreground">
                   Puntos
-                </th>{' '}
+                </th>
                 <th className="px-6 py-4 text-right text-sm font-semibold text-muted-foreground">
-                  Acciones
+                  Estadísticas
                 </th>
               </tr>
             </thead>
@@ -153,11 +159,34 @@ export const LeaderboardTableTierA = () => {
                     </span>
                   </td>
                   <td className="px-6 py-4 text-right">
-                    <Link
-                      to={`https://op.gg/lol/summoners/lan/${participant.nickname}-${participant.tag}`}
-                    >
-                      <TwitchIcon />
-                    </Link>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <a
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          href={`https://op.gg/lol/summoners/lan/${participant.nickname}-${participant.tag}`}
+                        >
+                          <Button variant="outline">
+                            <ChartBar className="size-4" />
+                          </Button>
+                        </a>
+                      </TooltipTrigger>
+                      <TooltipContent>OP.gg</TooltipContent>
+                    </Tooltip>
+                    {participant.stream && (
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <a
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            href={participant.stream}
+                          >
+                            <Kick />
+                          </a>
+                        </TooltipTrigger>
+                        <TooltipContent>Ir al stream</TooltipContent>
+                      </Tooltip>
+                    )}
                   </td>
                 </tr>
               ))}
@@ -201,9 +230,34 @@ const MobilePlayerCard = ({
         <div className="flex items-center gap-3">
           {getRankBadge(position)}
           <div>
-            <p className="font-semibold text-foreground">
-              {participant.nickname}
-            </p>
+            <div className="flex gap-4 items-center">
+              <p className="font-semibold text-foreground">
+                {participant.nickname}
+              </p>
+              <div>
+                <a
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  href={`https://op.gg/lol/summoners/lan/${participant.nickname}-${participant.tag}`}
+                >
+                  <Button
+                    variant="outline"
+                    className="gap-2 border-primary/30 hover:border-primary/60 hover:bg-primary/10"
+                  >
+                    Ver estadísticas
+                  </Button>
+                </a>
+                {participant.stream && (
+                  <a
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    href={participant.stream}
+                  >
+                    <Kick />
+                  </a>
+                )}
+              </div>
+            </div>
             <p className="text-sm text-muted-foreground flex items-center gap-1">
               {getRoleIcon(participant.role as Role)} {participant.role}
             </p>

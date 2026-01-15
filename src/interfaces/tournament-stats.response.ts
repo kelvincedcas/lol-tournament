@@ -10,6 +10,8 @@ export interface Player {
   nickname: string;
   tag: string;
   role: string;
+  group: string;
+  stream?: string;
   tier: string;
   rank: string;
   lp: number;
