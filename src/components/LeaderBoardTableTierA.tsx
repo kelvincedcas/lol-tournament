@@ -114,29 +114,27 @@ export const LeaderboardTableTierA = () => {
                 >
                   <td className="px-6 py-4">{getRankBadge(index + 1)}</td>
                   <td className="px-6 py-4">
-                    <td className="py-4">
-                      <div className="flex items-center gap-2 min-w-0">
-                        <span className="font-semibold text-foreground truncate">
-                          {participant.nickname}
-                        </span>
+                    <div className="flex items-center gap-2 min-w-0">
+                      <span className="font-semibold text-foreground truncate">
+                        {participant.nickname}
+                      </span>
 
-                        {participant.stream && (
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <a
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                href={participant.stream}
-                                className="text-green-500/60 flex items-center"
-                              >
-                                <VideoIcon className="size-5" />
-                              </a>
-                            </TooltipTrigger>
-                            <TooltipContent>Ver Stream</TooltipContent>
-                          </Tooltip>
-                        )}
-                      </div>
-                    </td>
+                      {participant.stream && (
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <a
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              href={participant.stream}
+                              className="text-green-500/60 flex items-center"
+                            >
+                              <VideoIcon className="size-5" />
+                            </a>
+                          </TooltipTrigger>
+                          <TooltipContent>Ver Stream</TooltipContent>
+                        </Tooltip>
+                      )}
+                    </div>
                   </td>
                   <td className="px-6 py-4">
                     <span

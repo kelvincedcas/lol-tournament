@@ -8,11 +8,14 @@ import { useSoloQ } from '@/hooks/useSoloQ';
 import type { Player } from '@/interfaces/tournament-stats.response';
 import { Trophy, Flame, Sword, ExternalLink } from 'lucide-react';
 import { Button } from './ui/button';
+import { TopPlayersSkeletonTierB } from './skeletons/TopPlayersSkeletonTierB';
 
 export const TopPlayersSectionTierB = () => {
   const { data } = useSoloQ();
 
-  if (!data) return;
+  if (!data) {
+    return <TopPlayersSkeletonTierB />;
+  }
 
   const topPlayers = data?.tierB.ranking.slice(0, 6);
 

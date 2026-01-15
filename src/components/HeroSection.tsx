@@ -1,11 +1,18 @@
 import { Trophy, Users, Target, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useSoloQ } from '@/hooks/useSoloQ';
+import { Spinner } from './ui/spinner';
+import { useQueryClient } from '@tanstack/react-query';
+import HeroSectionSkeleton from './skeletons/HeroSectionSkeleton';
 
 const HeroSection = () => {
-  const { data } = useSoloQ();
+  const queryClient = useQueryClient();
 
-  if (!data) return;
+  const { data, isFetching } = useSoloQ();
+
+  if (!data) {
+    return <HeroSectionSkeleton />;
+  }
 
   const ranking = [...data.tierA.ranking, ...data.tierB.ranking];
 
@@ -76,14 +83,40 @@ const HeroSection = () => {
           {/* Refresh Button */}
           <div className="mt-8">
             <Button
-              onClick={() => window.location.reload()}
-              variant="outline"
+              variant={'outline'}
               className="gap-2 border-primary/30 hover:border-primary/60 hover:bg-primary/10"
+              onClick={() =>
+                queryClient.invalidateQueries({
+                  queryKey: ['tournament-stats'],
+                  refetchType: 'active',
+                })
+              }
+              disabled={isFetching}
             >
-              <RefreshCw className="w-4 h-4" />
-              Refrescar estadísticas
+              {isFetching ? (
+                <>
+                  <Spinner /> Actualizando...
+                </>
+              ) : (
+                <>
+                  <RefreshCw className="w-4 h-4" />
+                  Refrescar estadísticas
+                </>
+              )}
             </Button>
           </div>
+          <p className="mt-5 font-bold">
+            Última actualización:{' '}
+            <span className="font-normal">
+              {new Date(data.updatedAt).toLocaleString('es-EC', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+              })}
+            </span>
+          </p>
         </div>
       </div>
     </section>
