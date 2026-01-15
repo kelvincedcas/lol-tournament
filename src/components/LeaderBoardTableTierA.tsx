@@ -6,7 +6,14 @@ import {
 } from '@/data/participants.data';
 import { useSoloQ } from '@/hooks/useSoloQ';
 import type { Player } from '@/interfaces/tournament-stats.response';
-import { Crown, Medal, Award, ChartBar } from 'lucide-react';
+import {
+  Crown,
+  Medal,
+  Award,
+  ChartBar,
+  ExternalLink,
+  VideoIcon,
+} from 'lucide-react';
 import type { JSX } from 'react';
 import {
   Tooltip,
@@ -100,8 +107,8 @@ export const LeaderboardTableTierA = () => {
                 <th className="px-6 py-4 text-right text-sm font-semibold text-muted-foreground">
                   Puntos
                 </th>
-                <th className="px-6 py-4 text-left text-sm font-semibold text-muted-foreground">
-                  Acciones
+                <th className="px-6 py-4 text-center text-sm font-semibold text-muted-foreground">
+                  Links
                 </th>
               </tr>
             </thead>
@@ -127,18 +134,12 @@ export const LeaderboardTableTierA = () => {
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 href={participant.stream}
-                                className="shrink-0"
+                                className="text-green-500/60 flex items-center"
                               >
-                                <Button
-                                  size="sm"
-                                  variant="outline"
-                                  className="border-green-500/50 hover:border-green-500/60 hover:bg-green-500/10"
-                                >
-                                  Ver stream
-                                </Button>
+                                <VideoIcon className="size-5" />
                               </a>
                             </TooltipTrigger>
-                            <TooltipContent>Ir al stream</TooltipContent>
+                            <TooltipContent>Ver Stream</TooltipContent>
                           </Tooltip>
                         )}
                       </div>
@@ -183,26 +184,20 @@ export const LeaderboardTableTierA = () => {
                       {participant.tournamentPoints.toLocaleString()}
                     </span>
                   </td>
-                  <td className="pl-6 py-4 text-right">
-                    <div className="flex justify-start gap-2">
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <a
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            href={`https://op.gg/lol/summoners/lan/${participant.nickname}-${participant.tag}`}
-                          >
-                            <Button
-                              variant="outline"
-                              className="gap-2 border-primary/30 hover:border-primary/60 hover:bg-primary/10"
-                            >
-                              Estadísticas
-                              <ChartBar className="size-4" />
-                            </Button>
-                          </a>
-                        </TooltipTrigger>
-                        <TooltipContent>OP.gg</TooltipContent>
-                      </Tooltip>
+                  <td className="px-6 py-4 text-center">
+                    <div>
+                      <a
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        href={participant.stream}
+                      >
+                        <Button
+                          variant="outline"
+                          className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-blue-500/10 text-blue-400 hover:bg-blue-500/20 hover:text-blue-300 transition-colors text-sm font-medium"
+                        >
+                          <ExternalLink className="size-4" /> OP.GG
+                        </Button>
+                      </a>
                     </div>
                   </td>
                 </tr>
@@ -251,35 +246,6 @@ const MobilePlayerCard = ({
               <p className="font-semibold text-foreground">
                 {participant.nickname}
               </p>
-              <div>
-                <a
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  href={`https://op.gg/lol/summoners/lan/${participant.nickname}-${participant.tag}`}
-                >
-                  <Button
-                    variant="outline"
-                    className="gap-2 border-primary/30 hover:border-primary/60 hover:bg-primary/10"
-                  >
-                    Ver estadísticas
-                  </Button>
-                </a>
-                {participant.stream && (
-                  <a
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    href={participant.stream}
-                    className="ml-2"
-                  >
-                    <Button
-                      variant="outline"
-                      className="border-green-500/50 hover:border-green-500/60 hover:bg-green-500/10"
-                    >
-                      Ver stream
-                    </Button>
-                  </a>
-                )}
-              </div>
             </div>
             <p className="text-sm text-muted-foreground flex items-center gap-1">
               {getRoleIcon(participant.role as Role)} {participant.role}
@@ -305,13 +271,13 @@ const MobilePlayerCard = ({
           </p>
           <p className="text-xs text-muted-foreground">{participant.lp} LP</p>
         </div>
-        <div className="p-2 rounded-lg bg-muted/30">
+        <div className="p-2 rounded-lg bg-muted/30 flex flex-col justify-center">
           <p className="font-semibold text-foreground">
             {participant.totalGames}
           </p>
           <p className="text-xs text-muted-foreground">Juegos</p>
         </div>
-        <div className="p-2 rounded-lg bg-muted/30">
+        <div className="p-2 rounded-lg bg-muted/30 flex flex-col justify-center">
           <p
             className={`font-semibold ${getWinRateColor(
               participant.wins,
@@ -324,6 +290,16 @@ const MobilePlayerCard = ({
             {participant.wins}W / {participant.losses}L
           </p>
         </div>
+      </div>
+      <div>
+        <a target="_blank" rel="noopener noreferrer" href={participant.stream}>
+          <Button
+            variant="outline"
+            className="mt-4 w-full inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-blue-500/10 text-blue-400 hover:bg-blue-500/20 hover:text-blue-300 transition-colors text-sm font-medium"
+          >
+            <ExternalLink className="size-4" /> Ver en OP.GG
+          </Button>
+        </a>
       </div>
     </div>
   );

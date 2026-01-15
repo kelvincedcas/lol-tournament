@@ -6,7 +6,14 @@ import {
 } from '@/data/participants.data';
 import { useSoloQ } from '@/hooks/useSoloQ';
 import type { Player } from '@/interfaces/tournament-stats.response';
-import { Trophy, Flame, Sword, ChartBar } from 'lucide-react';
+import {
+  Trophy,
+  Flame,
+  Sword,
+  ChartBar,
+  ExternalLink,
+  VideoIcon,
+} from 'lucide-react';
 
 import {
   Tooltip,
@@ -132,52 +139,25 @@ const PlayerCard = ({ player, position }: PlayerCardProps) => {
         </div>
 
         <div className="flex-1">
-          <div className="flex items-center gap-2 justify-between mb-1">
+          <div className="flex items-center gap-2">
             <h3 className="text-lg font-bold text-foreground mb-1">
               {player.nickname}
             </h3>
-            <div className="flex">
+            {player.stream && (
               <Tooltip>
                 <TooltipTrigger asChild>
                   <a
                     target="_blank"
                     rel="noopener noreferrer"
                     href={player.stream}
-                    className="ml-2"
+                    className="text-green-500/60 flex items-center -mt-1"
                   >
-                    <Button
-                      size={'sm'}
-                      variant="outline"
-                      className="gap-2 border-primary/30 hover:border-primary/60 hover:bg-primary/10"
-                    >
-                      <ChartBar />
-                    </Button>
+                    <VideoIcon className="size-5" />
                   </a>
                 </TooltipTrigger>
-                <TooltipContent>Ver estadísticas</TooltipContent>
+                <TooltipContent>Ver Stream</TooltipContent>
               </Tooltip>
-              {player.stream && (
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <a
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      href={player.stream}
-                      className="ml-2"
-                    >
-                      <Button
-                        size={'sm'}
-                        variant="outline"
-                        className="border-green-500/50 hover:border-green-500/60 hover:bg-green-500/10"
-                      >
-                        Stream
-                      </Button>
-                    </a>
-                  </TooltipTrigger>
-                  <TooltipContent>Kick</TooltipContent>
-                </Tooltip>
-              )}
-            </div>
+            )}
           </div>
           <div className={`text-sm font-semibold ${rankColor}`}>
             {player.tier} {player.rank} • {player.lp} LP
@@ -226,6 +206,21 @@ const PlayerCard = ({ player, position }: PlayerCardProps) => {
           <Sword className="w-3 h-3" />
           <span>#{position} Ranked</span>
         </div>
+      </div>
+      <div>
+        <a
+          target="_blank"
+          rel="noopener noreferrer"
+          href={player.stream}
+          className="flex"
+        >
+          <Button
+            variant="outline"
+            className="mt-4 w-full inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-blue-500/10 text-blue-400 hover:bg-blue-500/20 hover:text-blue-300 transition-colors text-sm font-medium"
+          >
+            <ExternalLink className="size-4" /> Ver en OP.GG
+          </Button>
+        </a>
       </div>
     </div>
   );

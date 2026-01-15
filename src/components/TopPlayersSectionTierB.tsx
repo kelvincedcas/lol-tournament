@@ -6,7 +6,7 @@ import {
 } from '@/data/participants.data';
 import { useSoloQ } from '@/hooks/useSoloQ';
 import type { Player } from '@/interfaces/tournament-stats.response';
-import { Trophy, Flame, Sword, ChartBar } from 'lucide-react';
+import { Trophy, Flame, Sword, ChartBar, ExternalLink } from 'lucide-react';
 import { Button } from './ui/button';
 
 import {
@@ -137,25 +137,6 @@ const PlayerCard = ({ player, position }: PlayerCardProps) => {
               {player.nickname}
             </h3>
             <div>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <a
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    href={player.stream}
-                    className="ml-2"
-                  >
-                    <Button
-                      size={'sm'}
-                      variant="outline"
-                      className="gap-2 border-primary/30 hover:border-primary/60 hover:bg-primary/10"
-                    >
-                      <ChartBar />
-                    </Button>
-                  </a>
-                </TooltipTrigger>
-                <TooltipContent>Ver estadísticas</TooltipContent>
-              </Tooltip>
               {player.stream && (
                 <a
                   target="_blank"
@@ -221,6 +202,22 @@ const PlayerCard = ({ player, position }: PlayerCardProps) => {
           <Sword className="w-3 h-3" />
           <span>#{position} Ranked</span>
         </div>
+      </div>
+
+      <div>
+        <a
+          target="_blank"
+          rel="noopener noreferrer"
+          href={player.stream}
+          className="flex"
+        >
+          <Button
+            variant="outline"
+            className="mt-4 w-full inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-blue-500/10 text-blue-400 hover:bg-blue-500/20 hover:text-blue-300 transition-colors text-sm font-medium"
+          >
+            <ExternalLink className="size-4" /> Ver en OP.GG
+          </Button>
+        </a>
       </div>
     </div>
   );
