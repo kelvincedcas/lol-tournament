@@ -85,6 +85,7 @@ async function fetchPlayerData(p: any) {
     // 🟡 UNRANKED
     data = {
       nickname: p.nickname,
+      tag: p.tag,
       role: p.role,
       group: p.group, // A | B
       tier: 'UNRANKED',
@@ -111,6 +112,7 @@ async function fetchPlayerData(p: any) {
 
     data = {
       nickname: p.nickname,
+      tag: p.tag,
       role: p.role,
       group: p.group, // A | B
       tier: ranked.tier,

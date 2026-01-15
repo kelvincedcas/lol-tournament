@@ -8,6 +8,7 @@ export interface TournamentStatsResponse {
 export interface Player {
   position?: number;
   nickname: string;
+  tag: string;
   role: string;
   tier: string;
   rank: string;

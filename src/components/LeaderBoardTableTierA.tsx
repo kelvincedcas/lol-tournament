@@ -6,8 +6,9 @@ import {
 } from '@/data/participants.data';
 import { useSoloQ } from '@/hooks/useSoloQ';
 import type { Player } from '@/interfaces/tournament-stats.response';
-import { Crown, Medal, Award } from 'lucide-react';
+import { Crown, Medal, Award, TwitchIcon } from 'lucide-react';
 import type { JSX } from 'react';
+import { Link } from 'react-router-dom';
 
 export const LeaderboardTableTierA = () => {
   // Sort by tournament points descending
@@ -80,9 +81,6 @@ export const LeaderboardTableTierA = () => {
                   Jugador
                 </th>
                 <th className="px-6 py-4 text-left text-sm font-semibold text-muted-foreground">
-                  Rol
-                </th>
-                <th className="px-6 py-4 text-left text-sm font-semibold text-muted-foreground">
                   Elo
                 </th>
                 <th className="px-6 py-4 text-center text-sm font-semibold text-muted-foreground">
@@ -96,6 +94,9 @@ export const LeaderboardTableTierA = () => {
                 </th>
                 <th className="px-6 py-4 text-right text-sm font-semibold text-muted-foreground">
                   Puntos
+                </th>{' '}
+                <th className="px-6 py-4 text-right text-sm font-semibold text-muted-foreground">
+                  Acciones
                 </th>
               </tr>
             </thead>
@@ -110,14 +111,6 @@ export const LeaderboardTableTierA = () => {
                   <td className="px-6 py-4">
                     <span className="font-semibold text-foreground">
                       {participant.nickname}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4">
-                    <span className="flex items-center gap-2">
-                      <span>{getRoleIcon(participant.role as Role)}</span>
-                      <span className="text-muted-foreground">
-                        {participant.role}
-                      </span>
                     </span>
                   </td>
                   <td className="px-6 py-4">
@@ -158,6 +151,13 @@ export const LeaderboardTableTierA = () => {
                     <span className="text-xl font-bold text-gradient-gold">
                       {participant.tournamentPoints.toLocaleString()}
                     </span>
+                  </td>
+                  <td className="px-6 py-4 text-right">
+                    <Link
+                      to={`https://op.gg/lol/summoners/lan/${participant.nickname}-${participant.tag}`}
+                    >
+                      <TwitchIcon />
+                    </Link>
                   </td>
                 </tr>
               ))}

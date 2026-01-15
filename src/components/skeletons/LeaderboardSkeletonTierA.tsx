@@ -23,9 +23,6 @@ export const LeaderboardSkeletonTierA = () => {
                   Jugador
                 </th>
                 <th className="px-6 py-4 text-left text-sm font-semibold text-muted-foreground">
-                  Rol
-                </th>
-                <th className="px-6 py-4 text-left text-sm font-semibold text-muted-foreground">
                   Elo
                 </th>
                 <th className="px-6 py-4 text-center text-sm font-semibold text-muted-foreground">
