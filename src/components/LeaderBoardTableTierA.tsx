@@ -14,7 +14,6 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 import { Button } from './ui/button';
-import { Kick } from './icons/Kick';
 
 export const LeaderboardTableTierA = () => {
   // Sort by tournament points descending
@@ -101,8 +100,8 @@ export const LeaderboardTableTierA = () => {
                 <th className="px-6 py-4 text-right text-sm font-semibold text-muted-foreground">
                   Puntos
                 </th>
-                <th className="px-6 py-4 text-right text-sm font-semibold text-muted-foreground">
-                  Estadísticas
+                <th className="px-6 py-4 text-left text-sm font-semibold text-muted-foreground">
+                  Acciones
                 </th>
               </tr>
             </thead>
@@ -115,9 +114,35 @@ export const LeaderboardTableTierA = () => {
                 >
                   <td className="px-6 py-4">{getRankBadge(index + 1)}</td>
                   <td className="px-6 py-4">
-                    <span className="font-semibold text-foreground">
-                      {participant.nickname}
-                    </span>
+                    <td className="py-4">
+                      <div className="flex items-center gap-2 min-w-0">
+                        <span className="font-semibold text-foreground truncate">
+                          {participant.nickname}
+                        </span>
+
+                        {participant.stream && (
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <a
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                href={participant.stream}
+                                className="shrink-0"
+                              >
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  className="border-green-500/50 hover:border-green-500/60 hover:bg-green-500/10"
+                                >
+                                  Ver stream
+                                </Button>
+                              </a>
+                            </TooltipTrigger>
+                            <TooltipContent>Ir al stream</TooltipContent>
+                          </Tooltip>
+                        )}
+                      </div>
+                    </td>
                   </td>
                   <td className="px-6 py-4">
                     <span
@@ -158,35 +183,27 @@ export const LeaderboardTableTierA = () => {
                       {participant.tournamentPoints.toLocaleString()}
                     </span>
                   </td>
-                  <td className="px-6 py-4 text-right">
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <a
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          href={`https://op.gg/lol/summoners/lan/${participant.nickname}-${participant.tag}`}
-                        >
-                          <Button variant="outline">
-                            <ChartBar className="size-4" />
-                          </Button>
-                        </a>
-                      </TooltipTrigger>
-                      <TooltipContent>OP.gg</TooltipContent>
-                    </Tooltip>
-                    {participant.stream && (
+                  <td className="pl-6 py-4 text-right">
+                    <div className="flex justify-start gap-2">
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <a
                             target="_blank"
                             rel="noopener noreferrer"
-                            href={participant.stream}
+                            href={`https://op.gg/lol/summoners/lan/${participant.nickname}-${participant.tag}`}
                           >
-                            <Kick />
+                            <Button
+                              variant="outline"
+                              className="gap-2 border-primary/30 hover:border-primary/60 hover:bg-primary/10"
+                            >
+                              Estadísticas
+                              <ChartBar className="size-4" />
+                            </Button>
                           </a>
                         </TooltipTrigger>
-                        <TooltipContent>Ir al stream</TooltipContent>
+                        <TooltipContent>OP.gg</TooltipContent>
                       </Tooltip>
-                    )}
+                    </div>
                   </td>
                 </tr>
               ))}
@@ -252,8 +269,14 @@ const MobilePlayerCard = ({
                     target="_blank"
                     rel="noopener noreferrer"
                     href={participant.stream}
+                    className="ml-2"
                   >
-                    <Kick />
+                    <Button
+                      variant="outline"
+                      className="border-green-500/50 hover:border-green-500/60 hover:bg-green-500/10"
+                    >
+                      Ver stream
+                    </Button>
                   </a>
                 )}
               </div>

@@ -7,6 +7,7 @@ import {
 import { useSoloQ } from '@/hooks/useSoloQ';
 import type { Player } from '@/interfaces/tournament-stats.response';
 import { Trophy, Flame, Sword } from 'lucide-react';
+import { Button } from './ui/button';
 
 export const TopPlayersSectionTierB = () => {
   const { data } = useSoloQ();
@@ -125,9 +126,42 @@ const PlayerCard = ({ player, position }: PlayerCardProps) => {
         </div>
 
         <div className="flex-1">
-          <h3 className="text-lg font-bold text-foreground mb-1">
-            {player.nickname}
-          </h3>
+          <div className="flex items-center gap-2 justify-between">
+            <h3 className="text-lg font-bold text-foreground mb-1">
+              {player.nickname}
+            </h3>
+            <div>
+              <a
+                target="_blank"
+                rel="noopener noreferrer"
+                href={`https://op.gg/lol/summoners/lan/${player.nickname}-${player.tag}`}
+              >
+                <Button
+                  size={'sm'}
+                  variant="outline"
+                  className="gap-2 border-primary/30 hover:border-primary/60 hover:bg-primary/10"
+                >
+                  Ver estadísticas
+                </Button>
+              </a>
+              {player.stream && (
+                <a
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  href={player.stream}
+                  className="ml-2"
+                >
+                  <Button
+                    size={'sm'}
+                    variant="outline"
+                    className="border-green-500/50 hover:border-green-500/60 hover:bg-green-500/10"
+                  >
+                    Ver stream
+                  </Button>
+                </a>
+              )}
+            </div>
+          </div>
           <div className={`text-sm font-semibold ${rankColor}`}>
             {player.tier} {player.rank} • {player.lp} LP
           </div>

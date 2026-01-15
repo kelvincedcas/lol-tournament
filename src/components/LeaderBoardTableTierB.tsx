@@ -6,8 +6,15 @@ import {
 } from '@/data/participants.data';
 import { useSoloQ } from '@/hooks/useSoloQ';
 import type { Player } from '@/interfaces/tournament-stats.response';
-import { Crown, Medal, Award } from 'lucide-react';
+import { Crown, Medal, Award, ChartBar } from 'lucide-react';
 import type { JSX } from 'react';
+
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
+import { Button } from './ui/button';
 
 export const LeaderboardTableTierB = () => {
   // Sort by tournament points descending
@@ -80,9 +87,6 @@ export const LeaderboardTableTierB = () => {
                   Jugador
                 </th>
                 <th className="px-6 py-4 text-left text-sm font-semibold text-muted-foreground">
-                  Rol
-                </th>
-                <th className="px-6 py-4 text-left text-sm font-semibold text-muted-foreground">
                   Elo
                 </th>
                 <th className="px-6 py-4 text-center text-sm font-semibold text-muted-foreground">
@@ -97,6 +101,9 @@ export const LeaderboardTableTierB = () => {
                 <th className="px-6 py-4 text-right text-sm font-semibold text-muted-foreground">
                   Puntos
                 </th>
+                <th className="px-6 py-4 text-left text-sm font-semibold text-muted-foreground">
+                  Acciones
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -110,14 +117,6 @@ export const LeaderboardTableTierB = () => {
                   <td className="px-6 py-4">
                     <span className="font-semibold text-foreground">
                       {participant.nickname}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4">
-                    <span className="flex items-center gap-2">
-                      <span>{getRoleIcon(participant.role as Role)}</span>
-                      <span className="text-muted-foreground">
-                        {participant.role}
-                      </span>
                     </span>
                   </td>
                   <td className="px-6 py-4">
@@ -158,6 +157,28 @@ export const LeaderboardTableTierB = () => {
                     <span className="text-xl font-bold text-gradient-gold">
                       {participant.tournamentPoints.toLocaleString()}
                     </span>
+                  </td>
+                  <td className="pl-6 py-4 text-right">
+                    <div className="flex justify-start gap-2">
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <a
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            href={`https://op.gg/lol/summoners/lan/${participant.nickname}-${participant.tag}`}
+                          >
+                            <Button
+                              variant="outline"
+                              className="gap-2 border-primary/30 hover:border-primary/60 hover:bg-primary/10"
+                            >
+                              Estadísticas
+                              <ChartBar className="size-4" />
+                            </Button>
+                          </a>
+                        </TooltipTrigger>
+                        <TooltipContent>OP.gg</TooltipContent>
+                      </Tooltip>
+                    </div>
                   </td>
                 </tr>
               ))}
