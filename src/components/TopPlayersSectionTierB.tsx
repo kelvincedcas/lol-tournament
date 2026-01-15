@@ -202,8 +202,7 @@ const PlayerCard = ({ player, position }: PlayerCardProps) => {
         <a
           target="_blank"
           rel="noopener noreferrer"
-          href={player.stream}
-          className="flex"
+          href={`https://op.gg/es/lol/summoners/lan/${player.nickname}-${player.tag}`}
         >
           <Button
             variant="outline"

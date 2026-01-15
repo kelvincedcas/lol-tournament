@@ -182,7 +182,7 @@ export const LeaderboardTableTierA = () => {
                       <a
                         target="_blank"
                         rel="noopener noreferrer"
-                        href={participant.stream}
+                        href={`https://op.gg/es/lol/summoners/lan/${participant.nickname}-${participant.tag}`}
                       >
                         <Button
                           variant="outline"
@@ -285,7 +285,11 @@ const MobilePlayerCard = ({
         </div>
       </div>
       <div>
-        <a target="_blank" rel="noopener noreferrer" href={participant.stream}>
+        <a
+          target="_blank"
+          rel="noopener noreferrer"
+          href={`https://op.gg/es/lol/summoners/lan/${participant.nickname}-${participant.tag}`}
+        >
           <Button
             variant="outline"
             className="mt-4 w-full inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-blue-500/10 text-blue-400 hover:bg-blue-500/20 hover:text-blue-300 transition-colors text-sm font-medium"
