@@ -13,7 +13,9 @@ async function riotFetch(url: string) {
 
   if (!res.ok) {
     const text = await res.text();
-    throw new Error(`Riot API error ${res.status}: ${text}`);
+    const error: any = new Error(`Riot API error ${res.status}: ${text}`);
+    error.status = res.status;
+    throw error;
   }
 
   return res.json();
@@ -34,7 +36,7 @@ export async function getPuuid(gameName: string, tagLine: string) {
 }
 
 /* =========================
-   RANKED BY PUUID (NUEVO)
+   RANKED BY PUUID
 ========================= */
 
 export async function getSoloQByPuuid(
@@ -45,4 +47,22 @@ export async function getSoloQByPuuid(
   );
 
   return leagues.find((l: any) => l.queueType === 'RANKED_SOLO_5x5') || null;
+}
+
+/* =========================
+   SPECTATOR (IN GAME)
+========================= */
+
+export async function isPlayerInGame(puuid: string): Promise<boolean> {
+  try {
+    await riotFetch(
+      `${AMERICAS}/lol/spectator/v5/active-games/by-summoner/${puuid}`,
+    );
+    return true; // 200 → en partida
+  } catch (err: any) {
+    if (err?.status === 404) {
+      return false; // no está en partida
+    }
+    throw err; // otros errores (429, 500)
+  }
 }
