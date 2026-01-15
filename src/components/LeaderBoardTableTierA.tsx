@@ -6,14 +6,7 @@ import {
 } from '@/data/participants.data';
 import { useSoloQ } from '@/hooks/useSoloQ';
 import type { Player } from '@/interfaces/tournament-stats.response';
-import {
-  Crown,
-  Medal,
-  Award,
-  ChartBar,
-  ExternalLink,
-  VideoIcon,
-} from 'lucide-react';
+import { Crown, Medal, Award, ExternalLink, VideoIcon } from 'lucide-react';
 import type { JSX } from 'react';
 import {
   Tooltip,

@@ -6,14 +6,9 @@ import {
 } from '@/data/participants.data';
 import { useSoloQ } from '@/hooks/useSoloQ';
 import type { Player } from '@/interfaces/tournament-stats.response';
-import { Crown, Medal, Award, ChartBar, ExternalLink } from 'lucide-react';
+import { Crown, Medal, Award, ExternalLink } from 'lucide-react';
 import type { JSX } from 'react';
 
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from '@/components/ui/tooltip';
 import { Button } from './ui/button';
 
 export const LeaderboardTableTierB = () => {

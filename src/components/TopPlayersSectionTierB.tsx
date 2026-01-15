@@ -6,14 +6,8 @@ import {
 } from '@/data/participants.data';
 import { useSoloQ } from '@/hooks/useSoloQ';
 import type { Player } from '@/interfaces/tournament-stats.response';
-import { Trophy, Flame, Sword, ChartBar, ExternalLink } from 'lucide-react';
+import { Trophy, Flame, Sword, ExternalLink } from 'lucide-react';
 import { Button } from './ui/button';
-
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from '@/components/ui/tooltip';
 
 export const TopPlayersSectionTierB = () => {
   const { data } = useSoloQ();
