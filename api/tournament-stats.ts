@@ -1,5 +1,5 @@
 import { TOURNAMENT_PLAYERS } from '../lib/players.js';
-import { getPuuid, getSoloQByPuuid, isPlayerInGame } from '../lib/riot.js';
+import { getPuuid, getSoloQByPuuid } from '../lib/riot.js';
 import {
   calculateTournamentPoints,
   buildRanking,
@@ -10,13 +10,13 @@ import {
    CONFIG
 ========================= */
 
-const CONCURRENCY_LIMIT = 2; // 🔥 BAJADO para evitar 429
+const CONCURRENCY_LIMIT = 3;
 const PLAYER_CACHE_TTL = 1000 * 60 * 20; // 20 min
 const CACHE_TTL = 1000 * 60 * 10; // 10 min
-const REFRESH_COOLDOWN = 1000 * 60 * 2; // 2 min
+const REFRESH_COOLDOWN = 1000 * 60 * 10;
 
 /* =========================
-   GLOBAL CACHE (Vercel memory)
+   GLOBAL CACHE
 ========================= */
 
 let CACHE: any = null;
@@ -49,8 +49,8 @@ function sleep(ms: number) {
 
 async function withRetry<T>(
   fn: () => Promise<T>,
-  retries = 1,
-  delay = 2000,
+  retries = 2,
+  delay = 1200,
 ): Promise<T> {
   try {
     return await fn();
@@ -67,7 +67,7 @@ async function withRetry<T>(
    PLAYER FETCH
 ========================= */
 
-async function fetchPlayerData(p: any, refreshRequested: boolean) {
+async function fetchPlayerData(p: any) {
   const cacheKey = `${p.nickname}#${p.tag}`;
   const cached = PLAYER_CACHE.get(cacheKey);
 
@@ -76,26 +76,18 @@ async function fetchPlayerData(p: any, refreshRequested: boolean) {
   }
 
   const puuid = await withRetry(() => getPuuid(p.nickname, p.tag));
-  const ranked = await withRetry(() => getSoloQByPuuid(puuid));
 
-  // 🎮 Spectator SOLO cuando hay refresh manual
-  let inGame = false;
-  if (refreshRequested) {
-    try {
-      inGame = await withRetry(() => isPlayerInGame(puuid), 1, 2500);
-    } catch {
-      inGame = false;
-    }
-  }
+  const ranked = await withRetry(() => getSoloQByPuuid(puuid));
 
   let data;
 
   if (!ranked) {
+    // 🟡 UNRANKED
     data = {
       nickname: p.nickname,
       tag: p.tag,
       role: p.role,
-      group: p.group,
+      group: p.group, // A | B
       ...(p.stream && { stream: p.stream }),
       tier: 'UNRANKED',
       rank: null,
@@ -105,7 +97,6 @@ async function fetchPlayerData(p: any, refreshRequested: boolean) {
       totalGames: 0,
       winrate: 0,
       tournamentPoints: 0,
-      inGame,
     };
   } else {
     const totalGames = ranked.wins + ranked.losses;
@@ -124,7 +115,7 @@ async function fetchPlayerData(p: any, refreshRequested: boolean) {
       nickname: p.nickname,
       tag: p.tag,
       role: p.role,
-      group: p.group,
+      group: p.group, // A | B
       ...(p.stream && { stream: p.stream }),
       tier: ranked.tier,
       rank: ranked.rank,
@@ -134,7 +125,6 @@ async function fetchPlayerData(p: any, refreshRequested: boolean) {
       totalGames,
       winrate,
       tournamentPoints,
-      inGame,
     };
   }
 
@@ -160,13 +150,14 @@ async function runWithConcurrency<T>(
 
   async function worker() {
     while (index < items.length) {
-      const current = index++;
-      const result = await fn(items[current]);
+      const currentIndex = index++;
+      const result = await fn(items[currentIndex]);
       if (result) results.push(result);
     }
   }
 
   const workers = Array.from({ length: limit }, () => worker());
+
   await Promise.all(workers);
   return results;
 }
@@ -179,7 +170,11 @@ function buildTierResult(players: any[]) {
   const ranking = buildRanking(players);
   const mvp = calculateMVP(ranking);
 
-  return { players, ranking, mvp };
+  return {
+    players,
+    ranking,
+    mvp,
+  };
 }
 
 /* =========================
@@ -197,12 +192,13 @@ export default async function handler(req: any, res: any) {
     const refreshRequested = req.query?.refresh === 'true';
     const now = Date.now();
 
-    // 🟢 Cache normal
     if (!refreshRequested && CACHE && now - LAST_UPDATE < CACHE_TTL) {
-      return res.status(200).json({ ...CACHE, fromCache: true });
+      return res.status(200).json({
+        ...CACHE,
+        fromCache: true,
+      });
     }
 
-    // 🟡 Cooldown refresh
     if (refreshRequested && CACHE && now - LAST_REFRESH < REFRESH_COOLDOWN) {
       return res.status(200).json({
         ...CACHE,
@@ -216,8 +212,14 @@ export default async function handler(req: any, res: any) {
     const allPlayers = await runWithConcurrency(
       TOURNAMENT_PLAYERS,
       CONCURRENCY_LIMIT,
-      (p) => fetchPlayerData(p, refreshRequested),
+      fetchPlayerData,
     );
+
+    if (allPlayers.length !== TOURNAMENT_PLAYERS.length) {
+      throw new Error(
+        `Incomplete data: ${allPlayers.length}/${TOURNAMENT_PLAYERS.length}`,
+      );
+    }
 
     const tierAPlayers = allPlayers.filter((p) => p.group === 'A');
     const tierBPlayers = allPlayers.filter((p) => p.group === 'B');
@@ -235,6 +237,8 @@ export default async function handler(req: any, res: any) {
     return res.status(200).json(payload);
   } catch (error) {
     console.error('Tournament stats error:', error);
-    return res.status(500).json({ error: 'Internal server error' });
+    return res.status(500).json({
+      error: 'Internal server error',
+    });
   }
 }

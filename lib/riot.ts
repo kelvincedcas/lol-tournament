@@ -13,9 +13,7 @@ async function riotFetch(url: string) {
 
   if (!res.ok) {
     const text = await res.text();
-    const error: any = new Error(`Riot API error ${res.status}: ${text}`);
-    error.status = res.status;
-    throw error;
+    throw new Error(`Riot API error ${res.status}: ${text}`);
   }
 
   return res.json();
@@ -36,7 +34,7 @@ export async function getPuuid(gameName: string, tagLine: string) {
 }
 
 /* =========================
-   RANKED BY PUUID
+   RANKED BY PUUID (NUEVO)
 ========================= */
 
 export async function getSoloQByPuuid(
@@ -47,23 +45,4 @@ export async function getSoloQByPuuid(
   );
 
   return leagues.find((l: any) => l.queueType === 'RANKED_SOLO_5x5') || null;
-}
-
-/* =========================
-   SPECTATOR (IN GAME)
-========================= */
-
-export async function isPlayerInGame(puuid: string): Promise<boolean> {
-  try {
-    await riotFetch(
-      `${LA1}/lol/spectator/v5/active-games/by-summoner/${puuid}`,
-    );
-    return true;
-  } catch (err: any) {
-    // 404 = no está en partida → válido
-    if (err?.status === 404) return false;
-
-    // 403 / 429 → no rompemos el backend
-    throw err;
-  }
 }
