@@ -67,27 +67,29 @@ async function withRetry<T>(
    PLAYER FETCH
 ========================= */
 
-async function fetchPlayerData(p: any) {
+async function fetchPlayerData(p: any, forceRefresh = false) {
   const cacheKey = `${p.nickname}#${p.tag}`;
   const cached = PLAYER_CACHE.get(cacheKey);
 
-  if (cached && Date.now() - cached.timestamp < PLAYER_CACHE_TTL) {
+  if (
+    !forceRefresh &&
+    cached &&
+    Date.now() - cached.timestamp < PLAYER_CACHE_TTL
+  ) {
     return cached.data;
   }
 
   const puuid = await withRetry(() => getPuuid(p.nickname, p.tag));
-
   const ranked = await withRetry(() => getSoloQByPuuid(puuid));
 
   let data;
 
   if (!ranked) {
-    // 🟡 UNRANKED
     data = {
       nickname: p.nickname,
       tag: p.tag,
       role: p.role,
-      group: p.group, // A | B
+      group: p.group,
       ...(p.stream && { stream: p.stream }),
       tier: 'UNRANKED',
       rank: null,
@@ -115,7 +117,7 @@ async function fetchPlayerData(p: any) {
       nickname: p.nickname,
       tag: p.tag,
       role: p.role,
-      group: p.group, // A | B
+      group: p.group,
       ...(p.stream && { stream: p.stream }),
       tier: ranked.tier,
       rank: ranked.rank,
@@ -212,14 +214,8 @@ export default async function handler(req: any, res: any) {
     const allPlayers = await runWithConcurrency(
       TOURNAMENT_PLAYERS,
       CONCURRENCY_LIMIT,
-      fetchPlayerData,
+      (p) => fetchPlayerData(p, refreshRequested),
     );
-
-    if (allPlayers.length !== TOURNAMENT_PLAYERS.length) {
-      throw new Error(
-        `Incomplete data: ${allPlayers.length}/${TOURNAMENT_PLAYERS.length}`,
-      );
-    }
 
     const tierAPlayers = allPlayers.filter((p) => p.group === 'A');
     const tierBPlayers = allPlayers.filter((p) => p.group === 'B');
