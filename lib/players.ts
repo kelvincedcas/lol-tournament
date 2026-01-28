@@ -13,7 +13,7 @@ export const TOURNAMENT_PLAYERS = [
     tag: '9620',
     role: 'MID',
     group: 'A',
-    stream: 'https://kick.com/folsa',
+    stream: 'https://www.twitch.tv/elfolsa',
   },
   { nickname: 'the gout', tag: '9912', role: 'TOP', group: 'A' },
   { nickname: 'Chamemohi', tag: 'LAN', role: 'ADC', group: 'A' },
