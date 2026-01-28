@@ -1,28 +1,57 @@
 import AwardsSection from './components/AwardsSection';
 import Footer from './components/Footer';
 import HeroSection from './components/HeroSection';
-import { LeaderboardTableTierA } from './components/LeaderBoardTableTierA';
-import { LeaderboardTableTierB } from './components/LeaderBoardTableTierB';
+import { LeaderboardTable } from './components/LeaderBoardTable';
 import PointsExplainer from './components/PointsExplainer';
 import RulesSection from './components/RulesSection';
 import HeroSectionSkeleton from './components/skeletons/HeroSectionSkeleton';
-import { LeaderboardSkeletonTierA } from './components/skeletons/LeaderboardSkeletonTierA';
-import { LeaderboardSkeletonTierB } from './components/skeletons/LeaderboardSkeletonTierB';
-import { TopPlayersSkeletonTierA } from './components/skeletons/TopPlayersSkeletonTierA';
-import { TopPlayersSkeletonTierB } from './components/skeletons/TopPlayersSkeletonTierB';
-import { TopPlayersSectionTierA } from './components/TopPlayersSectionTierA';
-import { TopPlayersSectionTierB } from './components/TopPlayersSectionTierB';
+import { LeaderboardSkeleton } from './components/skeletons/LeaderboardSkeleton.tsx';
+import { TopPlayersSkeleton } from './components/skeletons/TopPlayersSkeleton.tsx';
+import { TopPlayersSection } from './components/TopPlayersSection.tsx';
 import { useSoloQ } from './hooks/useSoloQ';
 
 export const LolTournament = () => {
-  const { isLoading } = useSoloQ();
+  const { data, isLoading } = useSoloQ();
+
+  const tiers = [
+    {
+      key: 'tierA',
+      label: 'Tier A',
+      players: data?.tierA.ranking,
+    },
+    {
+      key: 'tierB',
+      label: 'Tier B',
+      players: data?.tierB.ranking,
+    },
+  ];
+
   return (
     <div className="min-h-screen bg-background">
       {isLoading ? <HeroSectionSkeleton /> : <HeroSection />}
-      {isLoading ? <TopPlayersSkeletonTierA /> : <TopPlayersSectionTierA />}
-      {isLoading ? <TopPlayersSkeletonTierB /> : <TopPlayersSectionTierB />}
-      {isLoading ? <LeaderboardSkeletonTierA /> : <LeaderboardTableTierA />}
-      {isLoading ? <LeaderboardSkeletonTierB /> : <LeaderboardTableTierB />}
+      {tiers.map((tier) =>
+        isLoading ? (
+          <TopPlayersSkeleton key={tier.key} subtitle={tier.label} />
+        ) : (
+          <TopPlayersSection
+            key={tier.key}
+            players={tier.players || []}
+            subtitle={tier.label}
+          />
+        ),
+      )}
+
+      {tiers.map((tier) =>
+        isLoading ? (
+          <LeaderboardSkeleton key={tier.key} subtitle={tier.label} />
+        ) : (
+          <LeaderboardTable
+            key={tier.key}
+            subtitle={tier.label}
+            players={tier.players || []}
+          />
+        ),
+      )}
       <AwardsSection />
       <RulesSection />
       <PointsExplainer />

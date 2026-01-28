@@ -4,21 +4,25 @@ import {
   type Rank,
   type Role,
 } from '@/data/participants.data';
-import { useSoloQ } from '@/hooks/useSoloQ';
 import type { Player } from '@/interfaces/tournament-stats.response';
-import { Crown, Medal, Award, ExternalLink } from 'lucide-react';
+import { Crown, Medal, Award, ExternalLink, VideoIcon } from 'lucide-react';
 import type { JSX } from 'react';
-
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 import { Button } from './ui/button';
 
-export const LeaderboardTableTierB = () => {
-  // Sort by tournament points descending
-  const { data } = useSoloQ();
+interface LeaderboardTableProps {
+  players: Player[];
+  subtitle: string;
+}
 
-  if (!data) return;
-
-  const sortedParticipants = data?.tierB.ranking;
-
+export const LeaderboardTable = ({
+  players,
+  subtitle,
+}: LeaderboardTableProps) => {
   const getRankBadge = (position: number) => {
     if (position === 1) {
       return (
@@ -65,7 +69,7 @@ export const LeaderboardTableTierB = () => {
         <div className="flex items-center gap-3 mb-8">
           <h2 className="text-2xl md:text-3xl font-bold text-foreground">
             Tabla de clasificación{' '}
-            <span className="text-gradient-gold">Tier B</span>
+            <span className="text-gradient-gold">{subtitle}</span>
           </h2>
           <div className="h-px flex-1 bg-linear-to-r from-border to-transparent" />
         </div>
@@ -97,12 +101,12 @@ export const LeaderboardTableTierB = () => {
                   Puntos
                 </th>
                 <th className="px-6 py-4 text-center text-sm font-semibold text-muted-foreground">
-                  Acciones
+                  Links
                 </th>
               </tr>
             </thead>
             <tbody>
-              {sortedParticipants.map((participant, index) => (
+              {players.map((participant, index) => (
                 <tr
                   key={participant.nickname}
                   className="border-b border-border/50 last:border-0 hover:bg-muted/20 transition-colors animate-slide-up"
@@ -110,9 +114,27 @@ export const LeaderboardTableTierB = () => {
                 >
                   <td className="px-6 py-4">{getRankBadge(index + 1)}</td>
                   <td className="px-6 py-4">
-                    <span className="font-semibold text-foreground">
-                      {participant.nickname}
-                    </span>
+                    <div className="flex items-center gap-2 min-w-0">
+                      <span className="font-semibold text-foreground truncate">
+                        {participant.nickname}
+                      </span>
+
+                      {participant.stream && (
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <a
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              href={participant.stream}
+                              className="text-green-500/60 flex items-center"
+                            >
+                              <VideoIcon className="size-5" />
+                            </a>
+                          </TooltipTrigger>
+                          <TooltipContent>Ver Stream</TooltipContent>
+                        </Tooltip>
+                      )}
+                    </div>
                   </td>
                   <td className="px-6 py-4">
                     <span
@@ -177,7 +199,7 @@ export const LeaderboardTableTierB = () => {
 
         {/* Mobile Cards */}
         <div className="md:hidden space-y-4">
-          {sortedParticipants.map((participant, index) => (
+          {players.map((participant, index) => (
             <MobilePlayerCard
               key={participant.nickname}
               participant={participant}
@@ -211,9 +233,11 @@ const MobilePlayerCard = ({
         <div className="flex items-center gap-3">
           {getRankBadge(position)}
           <div>
-            <p className="font-semibold text-foreground">
-              {participant.nickname}
-            </p>
+            <div className="flex gap-4 items-center">
+              <p className="font-semibold text-foreground">
+                {participant.nickname}
+              </p>
+            </div>
             <p className="text-sm text-muted-foreground flex items-center gap-1">
               {getRoleIcon(participant.role as Role)} {participant.role}
             </p>

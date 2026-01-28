@@ -4,20 +4,26 @@ import {
   type Rank,
   type Role,
 } from '@/data/participants.data';
-import { useSoloQ } from '@/hooks/useSoloQ';
 import type { Player } from '@/interfaces/tournament-stats.response';
-import { Trophy, Flame, Sword, ExternalLink } from 'lucide-react';
+import { Trophy, Flame, Sword, ExternalLink, VideoIcon } from 'lucide-react';
+
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 import { Button } from './ui/button';
-import { TopPlayersSkeletonTierB } from './skeletons/TopPlayersSkeletonTierB';
 
-export const TopPlayersSectionTierB = () => {
-  const { data } = useSoloQ();
+interface TopPlayersSectionProps {
+  players: Player[];
+  subtitle: string;
+}
 
-  if (!data) {
-    return <TopPlayersSkeletonTierB />;
-  }
-
-  const topPlayers = data?.tierB.ranking.slice(0, 6);
+export const TopPlayersSection = ({
+  players,
+  subtitle,
+}: TopPlayersSectionProps) => {
+  const topPlayers = players?.slice(0, 6);
 
   return (
     <section className="py-16 px-4 bg-linear-to-b from-background to-card/30">
@@ -31,7 +37,8 @@ export const TopPlayersSectionTierB = () => {
             <Flame className="w-5 h-5" />
           </div>
           <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-            Top 6 jugadores <span className="text-gradient-gold">Tier B</span>
+            Top 6 jugadores{' '}
+            <span className="text-gradient-gold">{subtitle}</span>
           </h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">
             Los jugadores con más elo que compliten por alcanzar la cima
@@ -129,28 +136,25 @@ const PlayerCard = ({ player, position }: PlayerCardProps) => {
         </div>
 
         <div className="flex-1">
-          <div className="flex items-center gap-2 justify-between">
+          <div className="flex items-center gap-2">
             <h3 className="text-lg font-bold text-foreground mb-1">
               {player.nickname}
             </h3>
-            <div>
-              {player.stream && (
-                <a
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  href={player.stream}
-                  className="ml-2"
-                >
-                  <Button
-                    size={'sm'}
-                    variant="outline"
-                    className="border-green-500/50 hover:border-green-500/60 hover:bg-green-500/10"
+            {player.stream && (
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <a
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    href={player.stream}
+                    className="text-green-500/60 flex items-center -mt-1"
                   >
-                    Ver stream
-                  </Button>
-                </a>
-              )}
-            </div>
+                    <VideoIcon className="size-5" />
+                  </a>
+                </TooltipTrigger>
+                <TooltipContent>Ver Stream</TooltipContent>
+              </Tooltip>
+            )}
           </div>
           <div className={`text-sm font-semibold ${rankColor}`}>
             {player.tier} {player.rank} • {player.lp} LP
@@ -200,12 +204,12 @@ const PlayerCard = ({ player, position }: PlayerCardProps) => {
           <span>#{position} Ranked</span>
         </div>
       </div>
-
       <div>
         <a
           target="_blank"
           rel="noopener noreferrer"
           href={`https://op.gg/es/lol/summoners/lan/${player.nickname}-${player.tag}`}
+          className="flex"
         >
           <Button
             variant="outline"

@@ -1,12 +1,17 @@
 import { Skeleton } from '@/components/ui/skeleton';
 
-export const LeaderboardSkeletonTierB = () => {
+interface Props {
+  subtitle: string;
+}
+
+export const LeaderboardSkeleton = ({ subtitle }: Props) => {
   return (
     <section className="py-12 md:py-16">
       <div className="container m-auto p-6">
         <div className="flex items-center gap-3 mb-8">
           <h2 className="text-2xl md:text-3xl font-bold text-foreground">
-            Tabla de clasificación
+            Tabla de clasificación{' '}
+            <span className="text-gradient-gold">{subtitle}</span>
           </h2>
           <div className="h-px flex-1 bg-linear-to-r from-border to-transparent" />
         </div>
@@ -21,9 +26,6 @@ export const LeaderboardSkeletonTierB = () => {
                 </th>
                 <th className="px-6 py-4 text-left text-sm font-semibold text-muted-foreground">
                   Jugador
-                </th>
-                <th className="px-6 py-4 text-left text-sm font-semibold text-muted-foreground">
-                  Rol
                 </th>
                 <th className="px-6 py-4 text-left text-sm font-semibold text-muted-foreground">
                   Elo

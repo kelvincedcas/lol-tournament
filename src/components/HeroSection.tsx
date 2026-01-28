@@ -2,13 +2,15 @@ import { Trophy, Users, Target, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useSoloQ } from '@/hooks/useSoloQ';
 import { Spinner } from './ui/spinner';
-import { useQueryClient } from '@tanstack/react-query';
 import HeroSectionSkeleton from './skeletons/HeroSectionSkeleton';
+import { useQueryClient } from '@tanstack/react-query';
+import { getTournamentStatsAction } from '@/actions/get-tournament-stats.action';
 
 const HeroSection = () => {
   const queryClient = useQueryClient();
-
   const { data, isFetching } = useSoloQ();
+
+  // console.log({ data });
 
   if (!data) {
     return <HeroSectionSkeleton />;
@@ -83,15 +85,15 @@ const HeroSection = () => {
           {/* Refresh Button */}
           <div className="mt-8">
             <Button
-              variant={'outline'}
+              variant="outline"
               className="gap-2 border-primary/30 hover:border-primary/60 hover:bg-primary/10"
-              onClick={() =>
-                queryClient.invalidateQueries({
-                  queryKey: ['tournament-stats'],
-                  refetchType: 'active',
-                })
-              }
               disabled={isFetching}
+              onClick={() => {
+                queryClient.fetchQuery({
+                  queryKey: ['tournament-stats'],
+                  queryFn: () => getTournamentStatsAction(true),
+                });
+              }}
             >
               {isFetching ? (
                 <>

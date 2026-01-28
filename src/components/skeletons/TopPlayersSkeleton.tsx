@@ -1,7 +1,11 @@
 import { Skeleton } from '@/components/ui/skeleton';
 import { Flame } from 'lucide-react';
 
-export const TopPlayersSkeletonTierA = () => {
+interface Props {
+  subtitle: string;
+}
+
+export const TopPlayersSkeleton = ({ subtitle }: Props) => {
   return (
     <section className="py-16 px-4 bg-linear-to-b from-background to-card/30">
       <div className="container mx-auto max-w-6xl">
@@ -14,7 +18,8 @@ export const TopPlayersSkeletonTierA = () => {
             <Flame className="w-5 h-5" />
           </div>
           <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-            Top 6 jugadores
+            Top 6 jugadores{' '}
+            <span className="text-gradient-gold">{subtitle}</span>
           </h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">
             Los jugadores con más elo que compliten por alcanzar la cima
