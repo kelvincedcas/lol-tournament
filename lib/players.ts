@@ -37,4 +37,6 @@ export const TOURNAMENT_PLAYERS = [
   { nickname: 'MaestroB', tag: 'LAN', role: 'JUNGLE', group: 'B' },
   { nickname: 'SaSamiLu2025', tag: 'SaMi', role: 'MID', group: 'B' },
   { nickname: 'G2 Imap', tag: 'LAN', role: 'MID', group: 'B' },
+  { nickname: '7w7YeaH7w7', tag: 'LAN', role: 'MID', group: 'A' },
+  { nickname: 'Afro Sensei', tag: 'LAN', role: 'JUNGLE', group: 'B' },
 ];
