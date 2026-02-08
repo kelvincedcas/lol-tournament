@@ -9,5 +9,6 @@ export const getTournamentStatsAction = async (
     `/api/tournament-stats${refresh ? '?refresh=true' : ''}`,
   );
 
+  console.log(data);
   return data;
 };
