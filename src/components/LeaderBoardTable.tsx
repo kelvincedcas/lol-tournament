@@ -5,7 +5,16 @@ import {
   type Role,
 } from '@/data/participants.data';
 import type { Player } from '@/interfaces/tournament-stats.response';
-import { Crown, Medal, Award, ExternalLink, VideoIcon } from 'lucide-react';
+import {
+  Crown,
+  Medal,
+  Award,
+  ExternalLink,
+  VideoIcon,
+  Info,
+  Ban,
+  Video,
+} from 'lucide-react';
 import type { JSX } from 'react';
 import {
   Tooltip,
@@ -13,6 +22,8 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 import { Button } from './ui/button';
+import { Popover, PopoverContent, PopoverTrigger } from './ui/popover';
+import { Badge } from './ui/badge';
 
 interface LeaderboardTableProps {
   players: Player[];
@@ -109,13 +120,19 @@ export const LeaderboardTable = ({
               {players.map((participant, index) => (
                 <tr
                   key={participant.nickname}
-                  className="border-b border-border/50 last:border-0 hover:bg-muted/20 transition-colors animate-slide-up"
+                  className={`border-b border-border/50 last:border-0 transition-colors animate-slide-up ${
+                    participant.disqualified
+                      ? 'bg-destructive/5 hover:bg-destructive/10'
+                      : 'hover:bg-muted/20'
+                  }`}
                   style={{ animationDelay: `${index * 50}ms` }}
                 >
                   <td className="px-6 py-4">{getRankBadge(index + 1)}</td>
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-2 min-w-0">
-                      <span className="font-semibold text-foreground truncate">
+                      <span
+                        className={`font-semibold ${participant.disqualified ? 'text-destructive line-through' : 'text-foreground'}`}
+                      >
                         {participant.nickname}
                       </span>
 
@@ -133,6 +150,44 @@ export const LeaderboardTable = ({
                           </TooltipTrigger>
                           <TooltipContent>Ver Stream</TooltipContent>
                         </Tooltip>
+                      )}
+                      {participant.disqualified && (
+                        <div className="flex items-center gap-1.5">
+                          <Badge
+                            variant="destructive"
+                            className="text-xs gap-1"
+                          >
+                            <Ban className="w-3 h-3" />
+                            Desc.
+                          </Badge>
+                          <Popover>
+                            <PopoverTrigger asChild>
+                              <button
+                                className="text-destructive hover:text-destructive/80 transition-colors"
+                                title="View disqualification details"
+                              >
+                                <Info className="w-4 h-4" />
+                              </button>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-80">
+                              <div className="space-y-2">
+                                <h4 className="font-semibold text-destructive flex items-center gap-2">
+                                  <Ban className="w-4 h-4" />
+                                  Descalificado
+                                </h4>
+                                <p className="text-sm text-muted-foreground">
+                                  El invocador hizo cola en dúo con otro jugador
+                                  con su cuenta secundaria, lo cual incumple
+                                  directamente la{' '}
+                                  <span className="font-bold">
+                                    regla No. 3 establecida en la sección
+                                    "Directrices de juego limpio".
+                                  </span>
+                                </p>
+                              </div>
+                            </PopoverContent>
+                          </Popover>
+                        </div>
                       )}
                     </div>
                   </td>
@@ -228,15 +283,64 @@ const MobilePlayerCard = ({
   getWinRateColor,
 }: MobilePlayerCardProps) => {
   return (
-    <div className="rounded-xl border border-border bg-card p-4 animate-slide-up">
+    <div
+      className={`rounded-xl border bg-card p-4 animate-slide-up ${participant.disqualified ? 'border-destructive/50 bg-destructive/5' : 'border-border'}`}
+    >
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-3">
           {getRankBadge(position)}
           <div>
             <div className="flex gap-4 items-center">
-              <p className="font-semibold text-foreground">
+              <p
+                className={`font-semibold ${participant.disqualified ? 'text-destructive line-through' : 'text-foreground'}`}
+              >
                 {participant.nickname}
               </p>
+              {participant.stream && (
+                <a
+                  href={participant.stream}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-purple-400 hover:text-purple-300 transition-colors"
+                  title="Watch Stream"
+                >
+                  <Video className="w-4 h-4" />
+                </a>
+              )}
+              {participant.disqualified && (
+                <div className="flex items-center gap-1.5">
+                  <Badge variant="destructive" className="text-xs gap-1">
+                    <Ban className="w-3 h-3" />
+                    Desc.
+                  </Badge>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <button
+                        className="text-destructive hover:text-destructive/80 transition-colors"
+                        title="View details"
+                      >
+                        <Info className="w-4 h-4" />
+                      </button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-72">
+                      <div className="space-y-2">
+                        <h4 className="font-semibold text-destructive flex items-center gap-2">
+                          <Ban className="w-4 h-4" />
+                          Descalificado
+                        </h4>
+                        <p className="text-sm text-muted-foreground">
+                          El invocador hizo cola en dúo con otro jugador con su
+                          cuenta secundaria, lo cual incumple directamente la{' '}
+                          <span className="font-bold">
+                            regla No. 3 establecida en la sección "Directrices
+                            de juego limpio".
+                          </span>
+                        </p>
+                      </div>
+                    </PopoverContent>
+                  </Popover>
+                </div>
+              )}
             </div>
             <p className="text-sm text-muted-foreground flex items-center gap-1">
               {getRoleIcon(participant.role as Role)} {participant.role}

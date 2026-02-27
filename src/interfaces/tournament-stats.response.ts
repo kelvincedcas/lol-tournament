@@ -11,6 +11,7 @@ export interface Player {
   tag: string;
   role: string;
   group: string;
+  disqualified: boolean;
   stream?: string;
   tier: string;
   rank: string;

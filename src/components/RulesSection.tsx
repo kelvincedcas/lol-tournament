@@ -17,7 +17,7 @@ const rules = [
     icon: Users,
     title: 'DuoQ solo con participantes del torneo',
     description:
-      'Solo se puede hacer cola en dúo con otros participantes registrados del torneo. No se permite ayuda externa.',
+      'Solo se puede hacer cola en dúo con otros participantes del torneo y con la cuenta que se registró para participar. No se permite ayuda externa.',
   },
 ];
 
