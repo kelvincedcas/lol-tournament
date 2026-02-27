@@ -362,7 +362,8 @@ const MobilePlayerCard = ({
               participant.tier as Rank,
             )}`}
           >
-            {participant.tier} {participant.rank || ''}
+            {participant.tier === 'DISQUALIFIED' ? 'DESC.' : participant.tier}{' '}
+            {participant.rank || ''}
           </p>
           <p className="text-xs text-muted-foreground">{participant.lp} LP</p>
         </div>
