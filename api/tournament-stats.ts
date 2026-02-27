@@ -6,42 +6,22 @@ import {
   calculateMVP,
 } from '../lib/tournament.js';
 
-/* =========================
-   CONFIG
-========================= */
-
 const CONCURRENCY_LIMIT = 3;
-const PLAYER_CACHE_TTL = 1000 * 60 * 20; // 20 min
-const CACHE_TTL = 1000 * 60 * 10; // 10 min
+const PLAYER_CACHE_TTL = 1000 * 60 * 20;
+const CACHE_TTL = 1000 * 60 * 10;
 const REFRESH_COOLDOWN = 1000 * 60 * 10;
-
-/* =========================
-   GLOBAL CACHE
-========================= */
 
 let CACHE: any = null;
 let LAST_UPDATE = 0;
 let LAST_REFRESH = 0;
 
-/* =========================
-   PLAYER CACHE
-========================= */
-
 const PLAYER_CACHE = new Map<string, { timestamp: number; data: any }>();
-
-/* =========================
-   CORS
-========================= */
 
 function setCors(res: any) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
 }
-
-/* =========================
-   UTILS
-========================= */
 
 function sleep(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -63,12 +43,28 @@ async function withRetry<T>(
   }
 }
 
-/* =========================
-   PLAYER FETCH
-========================= */
-
 async function fetchPlayerData(p: any, forceRefresh = false) {
   const cacheKey = `${p.nickname}#${p.tag}`;
+
+  if (p.disqualified) {
+    return {
+      nickname: p.nickname,
+      tag: p.tag,
+      role: p.role,
+      group: p.group,
+      ...(p.stream && { stream: p.stream }),
+      disqualified: true,
+      tier: 'DISQUALIFIED',
+      rank: null,
+      lp: 0,
+      wins: 0,
+      losses: 0,
+      totalGames: 0,
+      winrate: 0,
+      tournamentPoints: 0,
+    };
+  }
+
   const cached = PLAYER_CACHE.get(cacheKey);
 
   if (
@@ -138,10 +134,6 @@ async function fetchPlayerData(p: any, forceRefresh = false) {
   return data;
 }
 
-/* =========================
-   SAFE CONCURRENCY POOL
-========================= */
-
 async function runWithConcurrency<T>(
   items: any[],
   limit: number,
@@ -159,18 +151,22 @@ async function runWithConcurrency<T>(
   }
 
   const workers = Array.from({ length: limit }, () => worker());
-
   await Promise.all(workers);
   return results;
 }
 
-/* =========================
-   TIER BUILDER
-========================= */
+function sortRankingWithDisqualified(ranking: any[]) {
+  return ranking.sort((a, b) => {
+    if (a.disqualified && !b.disqualified) return 1;
+    if (!a.disqualified && b.disqualified) return -1;
+    return b.tournamentPoints - a.tournamentPoints;
+  });
+}
 
 function buildTierResult(players: any[]) {
-  const ranking = buildRanking(players);
-  const mvp = calculateMVP(ranking);
+  const rankingBase = buildRanking(players);
+  const ranking = sortRankingWithDisqualified(rankingBase);
+  const mvp = calculateMVP(ranking.filter((p) => !p.disqualified));
 
   return {
     players,
@@ -178,10 +174,6 @@ function buildTierResult(players: any[]) {
     mvp,
   };
 }
-
-/* =========================
-   HANDLER
-========================= */
 
 export default async function handler(req: any, res: any) {
   setCors(res);

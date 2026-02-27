@@ -6,8 +6,20 @@ import { group } from 'console';
 
 export const TOURNAMENT_PLAYERS = [
   { nickname: 'lorito90', tag: 'LAN', role: 'SUPPORT', group: 'B' },
-  { nickname: 'Kasilio', tag: '1115', role: 'SUPPORT', group: 'A' },
-  { nickname: 'DarKofHelL', tag: 'LAN', role: 'MID', group: 'A' },
+  {
+    nickname: 'Kasilio',
+    tag: '1115',
+    role: 'SUPPORT',
+    group: 'A',
+    disqualified: true,
+  },
+  {
+    nickname: 'DarKofHelL',
+    tag: 'LAN',
+    role: 'MID',
+    group: 'A',
+    disqualified: true,
+  },
   {
     nickname: 'Folsa',
     tag: '9620',
@@ -20,8 +32,20 @@ export const TOURNAMENT_PLAYERS = [
   { nickname: '火 paLoma', tag: '1996', role: 'ADC', group: 'A' },
   { nickname: 'Bochamohi', tag: 'LAN', role: 'SUPPORT', group: 'B' },
   { nickname: 'Erosannin15', tag: '1986', role: 'JUNGLE', group: 'B' },
-  { nickname: 'flawer1212', tag: 'LAN', role: 'MID', group: 'B' },
-  { nickname: 'Paulsemohi', tag: 'LAN', role: 'JUNGLE', group: 'B' },
+  {
+    nickname: 'flawer1212',
+    tag: 'LAN',
+    role: 'MID',
+    group: 'B',
+    disqualified: true,
+  },
+  {
+    nickname: 'Paulsemohi',
+    tag: 'LAN',
+    role: 'JUNGLE',
+    group: 'B',
+    disqualified: true,
+  },
   { nickname: 'iBuprofeno500mg', tag: 'LAN', role: 'SUPPORT', group: 'B' },
   { nickname: 'Guada', tag: 'LAN', role: 'MID', group: 'A' },
   { nickname: 'No lo zed', tag: 'LAN', role: 'MID', group: 'A' },
