@@ -155,17 +155,21 @@ async function runWithConcurrency<T>(
   return results;
 }
 
-function sortRankingWithDisqualified(ranking: any[]) {
-  return ranking.sort((a, b) => {
-    if (a.disqualified && !b.disqualified) return 1;
-    if (!a.disqualified && b.disqualified) return -1;
-    return b.tournamentPoints - a.tournamentPoints;
-  });
+function reorderRanking(ranking: any[]) {
+  const qualified = ranking.filter((p) => !p.disqualified);
+  const disqualified = ranking.filter((p) => p.disqualified);
+
+  const reordered = [...qualified, ...disqualified];
+
+  return reordered.map((player, index) => ({
+    ...player,
+    position: index + 1,
+  }));
 }
 
 function buildTierResult(players: any[]) {
-  const rankingBase = buildRanking(players);
-  const ranking = sortRankingWithDisqualified(rankingBase);
+  const baseRanking = buildRanking(players);
+  const ranking = reorderRanking(baseRanking);
   const mvp = calculateMVP(ranking.filter((p) => !p.disqualified));
 
   return {
