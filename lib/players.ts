@@ -18,7 +18,6 @@ export const TOURNAMENT_PLAYERS = [
     tag: 'LAN',
     role: 'MID',
     group: 'A',
-    disqualified: true,
   },
   {
     nickname: 'Folsa',
