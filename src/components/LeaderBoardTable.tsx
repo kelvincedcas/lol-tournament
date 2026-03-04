@@ -121,7 +121,7 @@ export const LeaderboardTable = ({
                 <tr
                   key={participant.nickname}
                   className={`border-b border-border/50 last:border-0 transition-colors animate-slide-up ${
-                    participant.disqualified
+                    participant.disqualified || participant.strikes
                       ? 'bg-destructive/5 hover:bg-destructive/10'
                       : 'hover:bg-muted/20'
                   }`}
@@ -131,7 +131,7 @@ export const LeaderboardTable = ({
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-2 min-w-0">
                       <span
-                        className={`font-semibold ${participant.disqualified ? 'text-destructive line-through' : 'text-foreground'}`}
+                        className={`font-semibold ${participant.strikes ? 'text-destructive ' : 'text-foreground'} ${participant.disqualified && 'line-through'}`}
                       >
                         {participant.nickname}
                       </span>
@@ -151,44 +151,73 @@ export const LeaderboardTable = ({
                           <TooltipContent>Ver Stream</TooltipContent>
                         </Tooltip>
                       )}
-                      {participant.disqualified && (
-                        <div className="flex items-center gap-1.5">
-                          <Badge
-                            variant="destructive"
-                            className="text-xs gap-1"
-                          >
-                            <Ban className="w-3 h-3" />
-                            Desc.
-                          </Badge>
-                          <Popover>
-                            <PopoverTrigger asChild>
-                              <button
-                                className="text-destructive hover:text-destructive/80 transition-colors"
-                                title="View disqualification details"
-                              >
-                                <Info className="w-4 h-4" />
-                              </button>
-                            </PopoverTrigger>
-                            <PopoverContent className="w-80">
-                              <div className="space-y-2">
-                                <h4 className="font-semibold text-destructive flex items-center gap-2">
-                                  <Ban className="w-4 h-4" />
-                                  Descalificado
-                                </h4>
-                                <p className="text-sm text-muted-foreground">
-                                  El invocador hizo cola en dúo con otro jugador
-                                  con su cuenta secundaria, lo cual incumple
-                                  directamente la{' '}
-                                  <span className="font-bold">
-                                    regla No. 3 establecida en la sección
-                                    "Directrices de juego limpio".
-                                  </span>
-                                </p>
-                              </div>
-                            </PopoverContent>
-                          </Popover>
-                        </div>
-                      )}
+                      {participant.disqualified ||
+                        (participant.strikes && (
+                          <div className="flex items-center gap-1.5">
+                            <Badge
+                              variant="destructive"
+                              className="text-xs gap-1"
+                            >
+                              <Ban className="w-3 h-3" />
+                              {participant.disqualified ? 'Desc.' : 'Sanc.'}
+                            </Badge>
+                            <Popover>
+                              <PopoverTrigger asChild>
+                                <button
+                                  className="text-destructive hover:text-destructive/80 transition-colors"
+                                  title="View disqualification details"
+                                >
+                                  <Info className="w-4 h-4" />
+                                </button>
+                              </PopoverTrigger>
+                              <PopoverContent className="w-80">
+                                <div className="space-y-2">
+                                  {participant.disqualified ? (
+                                    <>
+                                      <h4 className="font-semibold text-destructive flex items-center gap-2">
+                                        <Ban className="w-4 h-4" />
+                                        Descalificado
+                                      </h4>
+                                      <p className="text-sm text-muted-foreground">
+                                        El invocador hizo cola en dúo con otro
+                                        jugador con su cuenta secundaria, lo
+                                        cual incumple directamente la{' '}
+                                        <span className="font-bold">
+                                          regla No. 3 establecida en la sección
+                                          "Directrices de juego limpio".
+                                        </span>
+                                      </p>
+                                    </>
+                                  ) : (
+                                    <>
+                                      <h4 className="font-semibold text-destructive flex items-center gap-2">
+                                        <Ban className="w-4 h-4" />
+                                        Sancionado
+                                      </h4>
+                                      <p className="font-black">
+                                        No. de strikes:{' '}
+                                        <span className="font-normal ml-1">
+                                          {participant.strikes}
+                                        </span>
+                                      </p>
+                                      <p className="text-sm text-muted-foreground">
+                                        El invocador hizo cola en dúo con otro
+                                        jugador con su cuenta secundaria, lo
+                                        cual incumple directamente la{' '}
+                                        <span className="font-bold">
+                                          regla No. 3 establecida en la sección
+                                          "Directrices de juego limpio".{' '}
+                                        </span>
+                                        Al llegar a 3 strikes será
+                                        descalificado.
+                                      </p>
+                                    </>
+                                  )}
+                                </div>
+                              </PopoverContent>
+                            </Popover>
+                          </div>
+                        ))}
                     </div>
                   </td>
                   <td className="px-6 py-4">
@@ -284,7 +313,7 @@ const MobilePlayerCard = ({
 }: MobilePlayerCardProps) => {
   return (
     <div
-      className={`rounded-xl border bg-card p-4 animate-slide-up ${participant.disqualified ? 'border-destructive/50 bg-destructive/5' : 'border-border'}`}
+      className={`rounded-xl border bg-card p-4 animate-slide-up ${participant.disqualified || participant.strikes ? 'border-destructive/50 bg-destructive/5' : 'border-border'}`}
     >
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-3">
@@ -292,7 +321,7 @@ const MobilePlayerCard = ({
           <div>
             <div className="flex gap-4 items-center">
               <p
-                className={`font-semibold ${participant.disqualified ? 'text-destructive line-through' : 'text-foreground'}`}
+                className={`font-semibold ${participant.strikes ? 'text-destructive ' : 'text-foreground'} ${participant.disqualified && 'line-through'}`}
               >
                 {participant.nickname}
               </p>
@@ -307,40 +336,69 @@ const MobilePlayerCard = ({
                   <Video className="w-4 h-4" />
                 </a>
               )}
-              {participant.disqualified && (
-                <div className="flex items-center gap-1.5">
-                  <Badge variant="destructive" className="text-xs gap-1">
-                    <Ban className="w-3 h-3" />
-                    Desc.
-                  </Badge>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <button
-                        className="text-destructive hover:text-destructive/80 transition-colors"
-                        title="View details"
-                      >
-                        <Info className="w-4 h-4" />
-                      </button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-72">
-                      <div className="space-y-2">
-                        <h4 className="font-semibold text-destructive flex items-center gap-2">
-                          <Ban className="w-4 h-4" />
-                          Descalificado
-                        </h4>
-                        <p className="text-sm text-muted-foreground">
-                          El invocador hizo cola en dúo con otro jugador con su
-                          cuenta secundaria, lo cual incumple directamente la{' '}
-                          <span className="font-bold">
-                            regla No. 3 establecida en la sección "Directrices
-                            de juego limpio".
-                          </span>
-                        </p>
-                      </div>
-                    </PopoverContent>
-                  </Popover>
-                </div>
-              )}
+              {participant.disqualified ||
+                (participant.strikes && (
+                  <div className="flex items-center gap-1.5">
+                    <Badge variant="destructive" className="text-xs gap-1">
+                      <Ban className="w-3 h-3" />
+                      {participant.disqualified ? 'Desc.' : 'Sanc.'}
+                    </Badge>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <button
+                          className="text-destructive hover:text-destructive/80 transition-colors"
+                          title="View details"
+                        >
+                          <Info className="w-4 h-4" />
+                        </button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-72">
+                        <div className="space-y-2">
+                          {participant.disqualified ? (
+                            <>
+                              <h4 className="font-semibold text-destructive flex items-center gap-2">
+                                <Ban className="w-4 h-4" />
+                                Descalificado
+                              </h4>
+                              <p className="text-sm text-muted-foreground">
+                                El invocador hizo cola en dúo con otro jugador
+                                con su cuenta secundaria, lo cual incumple
+                                directamente la{' '}
+                                <span className="font-bold">
+                                  regla No. 3 establecida en la sección
+                                  "Directrices de juego limpio".
+                                </span>
+                              </p>
+                            </>
+                          ) : (
+                            <>
+                              <h4 className="font-semibold text-destructive flex items-center gap-2">
+                                <Ban className="w-4 h-4" />
+                                Sancionado
+                              </h4>
+                              <p className="font-black">
+                                No. de strikes:{' '}
+                                <span className="font-normal ml-1">
+                                  {participant.strikes}
+                                </span>
+                              </p>
+                              <p className="text-sm text-muted-foreground">
+                                El invocador hizo cola en dúo con otro jugador
+                                con su cuenta secundaria, lo cual incumple
+                                directamente la{' '}
+                                <span className="font-bold">
+                                  regla No. 3 establecida en la sección
+                                  "Directrices de juego limpio".{' '}
+                                </span>
+                                Al llegar a 3 strikes será descalificado.
+                              </p>
+                            </>
+                          )}
+                        </div>
+                      </PopoverContent>
+                    </Popover>
+                  </div>
+                ))}
             </div>
             <p className="text-sm text-muted-foreground flex items-center gap-1">
               {getRoleIcon(participant.role as Role)} {participant.role}
