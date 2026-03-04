@@ -116,6 +116,7 @@ async function fetchPlayerData(p: any, forceRefresh = false) {
       role: p.role,
       group: p.group,
       ...(p.stream && { stream: p.stream }),
+      strikes: p.strikes,
       tier: ranked.tier,
       rank: ranked.rank,
       lp: ranked.leaguePoints,
