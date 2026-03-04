@@ -5,7 +5,15 @@ import {
   type Role,
 } from '@/data/participants.data';
 import type { Player } from '@/interfaces/tournament-stats.response';
-import { Trophy, Flame, Sword, ExternalLink, VideoIcon } from 'lucide-react';
+import {
+  Trophy,
+  Flame,
+  Sword,
+  ExternalLink,
+  VideoIcon,
+  Info,
+  Ban,
+} from 'lucide-react';
 
 import {
   Tooltip,
@@ -13,6 +21,8 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 import { Button } from './ui/button';
+import { Popover, PopoverContent, PopoverTrigger } from './ui/popover';
+import { Badge } from './ui/badge';
 
 interface TopPlayersSectionProps {
   players: Player[];
@@ -69,7 +79,7 @@ const PlayerCard = ({ player, position }: PlayerCardProps) => {
   const rankColor = getRankColor(player.tier as Rank);
   const roleIcon = getRoleIcon(player.role as Role);
 
-  const getPositionStyle = (pos: number) => {
+  const getPositionStyle = (pos: number, sanctioned: boolean) => {
     switch (pos) {
       case 1:
         return 'from-gold/20 to-gold/5 border-gold/50 shadow-gold/20';
@@ -78,7 +88,7 @@ const PlayerCard = ({ player, position }: PlayerCardProps) => {
       case 3:
         return 'from-rank-bronze/20 to-rank-bronze/5 border-rank-bronze/50 shadow-rank-bronze/20';
       default:
-        return 'from-card to-card/80 border-border';
+        return ` ${sanctioned ? 'border-destructive/50 bg-destructive/5' : 'from-card to-card/80 border-border'}`;
     }
   };
 
@@ -126,6 +136,7 @@ const PlayerCard = ({ player, position }: PlayerCardProps) => {
     <div
       className={`relative p-6 rounded-xl border bg-linear-to-br ${getPositionStyle(
         position,
+        player.strikes ? true : false,
       )} backdrop-blur-sm transition-all duration-300 hover:scale-[1.02] hover:shadow-xl`}
     >
       {getPositionBadge(position)}
@@ -137,9 +148,58 @@ const PlayerCard = ({ player, position }: PlayerCardProps) => {
 
         <div className="flex-1">
           <div className="flex items-center gap-2">
-            <h3 className="text-lg font-bold text-foreground mb-1">
-              {player.nickname}
-            </h3>
+            <div className="flex items-center gap-2 mb-1">
+              <h3
+                className={`text-lg font-bold ${player.strikes ? 'text-destructive ' : 'text-foreground'}`}
+              >
+                {player.nickname}
+              </h3>
+              {player.strikes && (
+                <div className="flex items-center gap-1.5">
+                  <Badge variant="destructive" className="text-xs gap-1">
+                    <Ban className="w-3 h-3" />
+                    {player.disqualified ? 'Desc.' : 'Sanc.'}
+                  </Badge>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <button
+                        className="text-destructive hover:text-destructive/80 transition-colors"
+                        title="View details"
+                      >
+                        <Info className="w-4 h-4" />
+                      </button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-72">
+                      <div className="space-y-2">
+                        <>
+                          <h4 className="font-semibold text-destructive flex items-center gap-2">
+                            <Ban className="w-4 h-4" />
+                            Sancionado
+                          </h4>
+                          <p className="font-black">
+                            No. de strikes:{' '}
+                            <span className="font-normal ml-1">
+                              {player.strikes}
+                            </span>
+                          </p>
+                          <p className="text-sm text-muted-foreground">
+                            El invocador hizo cola en dúo con otro jugador con
+                            su cuenta secundaria, lo cual incumple directamente
+                            la{' '}
+                            <span className="font-bold">
+                              regla No. 3 establecida en la sección "Directrices
+                              de juego limpio".{' '}
+                            </span>
+                            Al llegar a 3 strikes será{' '}
+                            <strong>descalificado.</strong>
+                          </p>
+                        </>
+                      </div>
+                    </PopoverContent>
+                  </Popover>
+                </div>
+              )}
+            </div>
             {player.stream && (
               <Tooltip>
                 <TooltipTrigger asChild>
