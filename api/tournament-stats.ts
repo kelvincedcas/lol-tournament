@@ -46,13 +46,14 @@ async function withRetry<T>(
 async function fetchPlayerData(p: any, forceRefresh = false) {
   const cacheKey = `${p.nickname}#${p.tag}`;
 
-  if (p.disqualified) {
+  if (p.strikes >= 3) {
     return {
       nickname: p.nickname,
       tag: p.tag,
       role: p.role,
       group: p.group,
       ...(p.stream && { stream: p.stream }),
+      strikes: p.strikes,
       disqualified: true,
       tier: 'DISQUALIFIED',
       rank: null,
