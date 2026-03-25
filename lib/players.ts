@@ -29,7 +29,7 @@ export const TOURNAMENT_PLAYERS = [
   },
   { nickname: 'the gout', tag: '9912', role: 'TOP', group: 'A' },
   { nickname: 'Chamemohi', tag: 'LAN', role: 'ADC', group: 'A' },
-  { nickname: '火 paLoma', tag: '1996', role: 'ADC', group: 'A' },
+  { nickname: 'pastiLLita', tag: '1996', role: 'ADC', group: 'A' },
   { nickname: 'Bochamohi', tag: 'LAN', role: 'SUPPORT', group: 'B' },
   { nickname: 'Erosannin15', tag: '1986', role: 'JUNGLE', group: 'B' },
   {

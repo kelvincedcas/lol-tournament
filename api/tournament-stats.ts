@@ -35,7 +35,8 @@ async function withRetry<T>(
   try {
     return await fn();
   } catch (err: any) {
-    if (err?.status === 429 && retries > 0) {
+    // 👇 Manejo real de rate limit
+    if ((err?.status === 429 || err?.message?.includes('429')) && retries > 0) {
       await sleep(delay);
       return withRetry(fn, retries - 1, delay * 1.5);
     }
@@ -43,26 +44,35 @@ async function withRetry<T>(
   }
 }
 
+function buildUnrankedPlayer(p: any, extra: any = {}) {
+  return {
+    nickname: p.nickname,
+    tag: p.tag,
+    role: p.role,
+    group: p.group,
+    ...(p.stream && { stream: p.stream }),
+    strikes: p.strikes,
+    tier: 'UNRANKED',
+    rank: null,
+    lp: 0,
+    wins: 0,
+    losses: 0,
+    totalGames: 0,
+    winrate: 0,
+    tournamentPoints: 0,
+    ...extra,
+  };
+}
+
 async function fetchPlayerData(p: any, forceRefresh = false) {
   const cacheKey = `${p.nickname}#${p.tag}`;
 
+  // 👇 Descalificado
   if (p.strikes >= 3) {
     return {
-      nickname: p.nickname,
-      tag: p.tag,
-      role: p.role,
-      group: p.group,
-      ...(p.stream && { stream: p.stream }),
-      strikes: p.strikes,
+      ...buildUnrankedPlayer(p),
       disqualified: true,
       tier: 'DISQUALIFIED',
-      rank: null,
-      lp: 0,
-      wins: 0,
-      losses: 0,
-      totalGames: 0,
-      winrate: 0,
-      tournamentPoints: 0,
     };
   }
 
@@ -76,28 +86,25 @@ async function fetchPlayerData(p: any, forceRefresh = false) {
     return cached.data;
   }
 
-  const puuid = await withRetry(() => getPuuid(p.nickname, p.tag));
-  const ranked = await withRetry(() => getSoloQByPuuid(puuid));
+  try {
+    const puuid = await withRetry(() => getPuuid(p.nickname, p.tag));
 
-  let data;
+    // 👇 Jugador no existe
+    if (!puuid) {
+      const data = buildUnrankedPlayer(p);
+      PLAYER_CACHE.set(cacheKey, { timestamp: Date.now(), data });
+      return data;
+    }
 
-  if (!ranked) {
-    data = {
-      nickname: p.nickname,
-      tag: p.tag,
-      role: p.role,
-      group: p.group,
-      ...(p.stream && { stream: p.stream }),
-      tier: 'UNRANKED',
-      rank: null,
-      lp: 0,
-      wins: 0,
-      losses: 0,
-      totalGames: 0,
-      winrate: 0,
-      tournamentPoints: 0,
-    };
-  } else {
+    const ranked = await withRetry(() => getSoloQByPuuid(puuid));
+
+    // 👇 Siempre debería venir algo, pero por seguridad:
+    if (!ranked || ranked.tier === 'UNRANKED') {
+      const data = buildUnrankedPlayer(p);
+      PLAYER_CACHE.set(cacheKey, { timestamp: Date.now(), data });
+      return data;
+    }
+
     const totalGames = ranked.wins + ranked.losses;
     const winrate =
       totalGames > 0
@@ -110,7 +117,7 @@ async function fetchPlayerData(p: any, forceRefresh = false) {
       ranked.leaguePoints,
     );
 
-    data = {
+    const data = {
       nickname: p.nickname,
       tag: p.tag,
       role: p.role,
@@ -126,14 +133,28 @@ async function fetchPlayerData(p: any, forceRefresh = false) {
       winrate,
       tournamentPoints,
     };
+
+    PLAYER_CACHE.set(cacheKey, {
+      timestamp: Date.now(),
+      data,
+    });
+
+    return data;
+  } catch (error) {
+    // 🔥 CLAVE: nunca romper por un jugador
+    console.error(`Error con jugador ${p.nickname}#${p.tag}`, error);
+
+    const data = buildUnrankedPlayer(p, {
+      error: true,
+    });
+
+    PLAYER_CACHE.set(cacheKey, {
+      timestamp: Date.now(),
+      data,
+    });
+
+    return data;
   }
-
-  PLAYER_CACHE.set(cacheKey, {
-    timestamp: Date.now(),
-    data,
-  });
-
-  return data;
 }
 
 async function runWithConcurrency<T>(
@@ -147,8 +168,12 @@ async function runWithConcurrency<T>(
   async function worker() {
     while (index < items.length) {
       const currentIndex = index++;
-      const result = await fn(items[currentIndex]);
-      if (result) results.push(result);
+      try {
+        const result = await fn(items[currentIndex]);
+        if (result) results.push(result);
+      } catch (err) {
+        console.error('Worker error:', err);
+      }
     }
   }
 
@@ -231,8 +256,14 @@ export default async function handler(req: any, res: any) {
     return res.status(200).json(payload);
   } catch (error) {
     console.error('Tournament stats error:', error);
-    return res.status(500).json({
-      error: 'Internal server error',
+
+    // 👇 fallback seguro incluso si TODO falla
+    return res.status(200).json({
+      updatedAt: new Date().toISOString(),
+      tierA: { players: [], ranking: [], mvp: null },
+      tierB: { players: [], ranking: [], mvp: null },
+      fromCache: false,
+      error: 'fallback_safe',
     });
   }
 }
