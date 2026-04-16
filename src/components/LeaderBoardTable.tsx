@@ -151,73 +151,71 @@ export const LeaderboardTable = ({
                           <TooltipContent>Ver Stream</TooltipContent>
                         </Tooltip>
                       )}
-                      {participant.disqualified ||
-                        (participant.strikes && (
-                          <div className="flex items-center gap-1.5">
-                            <Badge
-                              variant="destructive"
-                              className="text-xs gap-1"
-                            >
-                              <Ban className="w-3 h-3" />
-                              {participant.disqualified ? 'Desc.' : 'Sanc.'}
-                            </Badge>
-                            <Popover>
-                              <PopoverTrigger asChild>
-                                <button
-                                  className="text-destructive hover:text-destructive/80 transition-colors"
-                                  title="View disqualification details"
-                                >
-                                  <Info className="w-4 h-4" />
-                                </button>
-                              </PopoverTrigger>
-                              <PopoverContent className="w-80">
-                                <div className="space-y-2">
-                                  {participant.disqualified ? (
-                                    <>
-                                      <h4 className="font-semibold text-destructive flex items-center gap-2">
-                                        <Ban className="w-4 h-4" />
-                                        Descalificado
-                                      </h4>
-                                      <p className="text-sm text-muted-foreground">
-                                        El invocador hizo cola en dúo con otro
-                                        jugador con su cuenta secundaria, lo
-                                        cual incumple directamente la{' '}
-                                        <span className="font-bold">
-                                          regla No. 3 establecida en la sección
-                                          "Directrices de juego limpio".
-                                        </span>
-                                      </p>
-                                    </>
-                                  ) : (
-                                    <>
-                                      <h4 className="font-semibold text-destructive flex items-center gap-2">
-                                        <Ban className="w-4 h-4" />
-                                        Sancionado
-                                      </h4>
-                                      <p className="font-black">
-                                        No. de strikes:{' '}
-                                        <span className="font-normal ml-1">
-                                          {participant.strikes}
-                                        </span>
-                                      </p>
-                                      <p className="text-sm text-muted-foreground">
-                                        El invocador hizo cola en dúo con otro
-                                        jugador con su cuenta secundaria, lo
-                                        cual incumple directamente la{' '}
-                                        <span className="font-bold">
-                                          regla No. 3 establecida en la sección
-                                          "Directrices de juego limpio".{' '}
-                                        </span>
-                                        Al llegar a 3 strikes será
-                                        descalificado.
-                                      </p>
-                                    </>
-                                  )}
-                                </div>
-                              </PopoverContent>
-                            </Popover>
-                          </div>
-                        ))}
+                      {(participant.disqualified || participant.strikes) && (
+                        <div className="flex items-center gap-1.5">
+                          <Badge
+                            variant="destructive"
+                            className="text-xs gap-1"
+                          >
+                            <Ban className="w-3 h-3" />
+                            {participant.disqualified ? 'Desc.' : 'Sanc.'}
+                          </Badge>
+                          <Popover>
+                            <PopoverTrigger asChild>
+                              <button
+                                className="text-destructive hover:text-destructive/80 transition-colors"
+                                title="View disqualification details"
+                              >
+                                <Info className="w-4 h-4" />
+                              </button>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-80">
+                              <div className="space-y-2">
+                                {participant.disqualified ? (
+                                  <>
+                                    <h4 className="font-semibold text-destructive flex items-center gap-2">
+                                      <Ban className="w-4 h-4" />
+                                      Descalificado
+                                    </h4>
+                                    <p className="text-sm text-muted-foreground">
+                                      El invocador hizo cola en dúo con otro
+                                      jugador con su cuenta secundaria, lo cual
+                                      incumple directamente la{' '}
+                                      <span className="font-bold">
+                                        regla No. 3 establecida en la sección
+                                        "Directrices de juego limpio".
+                                      </span>
+                                    </p>
+                                  </>
+                                ) : (
+                                  <>
+                                    <h4 className="font-semibold text-destructive flex items-center gap-2">
+                                      <Ban className="w-4 h-4" />
+                                      Sancionado
+                                    </h4>
+                                    <p className="font-black">
+                                      No. de strikes:{' '}
+                                      <span className="font-normal ml-1">
+                                        {participant.strikes}
+                                      </span>
+                                    </p>
+                                    <p className="text-sm text-muted-foreground">
+                                      El invocador hizo cola en dúo con otro
+                                      jugador con su cuenta secundaria, lo cual
+                                      incumple directamente la{' '}
+                                      <span className="font-bold">
+                                        regla No. 3 establecida en la sección
+                                        "Directrices de juego limpio".{' '}
+                                      </span>
+                                      Al llegar a 3 strikes será descalificado.
+                                    </p>
+                                  </>
+                                )}
+                              </div>
+                            </PopoverContent>
+                          </Popover>
+                        </div>
+                      )}
                     </div>
                   </td>
                   <td className="px-6 py-4">
