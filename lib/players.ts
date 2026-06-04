@@ -2,7 +2,7 @@
    TORNEO PLAYERS
 ========================= */
 
-import { group } from 'console';
+// import { group } from 'console';
 
 export const TOURNAMENT_PLAYERS = [
   { nickname: 'lorito90', tag: 'LAN', role: 'SUPPORT', group: 'B' },
@@ -57,7 +57,7 @@ export const TOURNAMENT_PLAYERS = [
   { nickname: 'Rudamohi', tag: 'LAN', role: 'JUNGLE', group: 'A' },
   { nickname: 'Sanji Ec', tag: 'LAN', role: 'JUNGLE', group: 'B' },
   { nickname: 'Boa HancocK', tag: 'GPI', role: 'SUPPORT', group: 'A' },
-  { nickname: 'TheLordIkki', tag: 'Danny', role: 'ADC', group: 'A' },
+  { nickname: 'Tsuna Sawada', tag: 'Danny', role: 'ADC', group: 'A' },
   { nickname: 'Misha Ec', tag: 'LAN', role: 'MID', group: 'A' },
   { nickname: 'WUKOG', tag: '4540', role: 'JUNGLE', group: 'B' },
   { nickname: 'MaestroB', tag: 'LAN', role: 'JUNGLE', group: 'B' },
